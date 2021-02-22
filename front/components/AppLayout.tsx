@@ -4,6 +4,7 @@ import { Menu, Input, Row, Col } from 'antd';
 
 import UserProfile from 'components/UserProfile';
 import LoginForm from 'components/LoginForm';
+import styled from '@emotion/styled';
 
 type Props = {
   children: ReactNode;
@@ -25,7 +26,7 @@ const AppLayout: FC<Props> = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Input.Search enterButton style={{ verticalAlign: 'middle' }} />
+          <SearchInput enterButton />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup">
@@ -53,5 +54,9 @@ const AppLayout: FC<Props> = ({ children }) => {
     </div>
   );
 };
+
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
 
 export default AppLayout;
