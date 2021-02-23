@@ -36,7 +36,11 @@ const AppLayout: FC<Props> = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggenIn ? <UserProfile /> : <LoginForm />}
+          {isLoggenIn ? (
+            <UserProfile setIsLoggenIn={setIsLoggenIn} />
+          ) : (
+            <LoginForm setIsLoggenIn={setIsLoggenIn} />
+          )}
         </Col>
         <Col xs={24} md={12}>
           {children}
