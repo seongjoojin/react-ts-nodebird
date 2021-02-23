@@ -1,22 +1,17 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback } from 'react';
 import {Button, Form} from 'antd';
 import Link from 'next/link';
 import styled from '@emotion/styled';
+import useInput from 'hooks/useInput';
 
 interface IProps {
   setIsLoggenIn: Dispatch<SetStateAction<boolean>>;
 }
 
 const LoginForm = ({ setIsLoggenIn }: IProps) => {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+  const [id, onChangeId] = useInput('');
+  const [password, onChangePassword] = useInput('');
 
-  const onChangeId = useCallback((e) => {
-    setId(e.target.value);
-  }, []);
-  const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
     setIsLoggenIn(true);

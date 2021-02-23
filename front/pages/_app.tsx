@@ -1,9 +1,9 @@
-import { AppProps } from 'next/app';
+import React from 'react';
 import Head from 'next/head';
-import { FC } from 'react';
+import { AppProps } from 'next/app';
 import 'antd/dist/antd.css';
 
-const App : FC<AppProps> = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
@@ -13,6 +13,6 @@ const App : FC<AppProps> = ({ Component, pageProps }) => {
       <Component {...pageProps} />
     </>
   );
-}
+};
 
 export default App;
