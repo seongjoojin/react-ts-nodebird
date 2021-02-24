@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { AppProps } from 'next/app';
 import 'antd/dist/antd.css';
 
+import wrapper from 'store/configureStore';
+
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
@@ -15,4 +17,4 @@ const App = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default App;
+export default wrapper.withRedux(App);
