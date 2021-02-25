@@ -1,17 +1,19 @@
 import { FC, ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
+import { useSelector } from 'react-redux'
 
 import UserProfile from 'components/UserProfile';
 import LoginForm from 'components/LoginForm';
 import styled from '@emotion/styled';
+import { RootState } from 'reducers';
 
 type Props = {
   children: ReactNode;
 };
 
 const AppLayout: FC<Props> = ({ children }) => {
-  const [isLoggenIn, setIsLoggenIn] = useState(false);
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   return (
     <div>
       <Menu mode="horizontal">
@@ -36,10 +38,10 @@ const AppLayout: FC<Props> = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggenIn ? (
-            <UserProfile setIsLoggenIn={setIsLoggenIn} />
+          {isLoggedIn ? (
+            <UserProfile />
           ) : (
-            <LoginForm setIsLoggenIn={setIsLoggenIn} />
+            <LoginForm  />
           )}
         </Col>
         <Col xs={24} md={12}>

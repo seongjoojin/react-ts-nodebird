@@ -1,13 +1,15 @@
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import React, {  useCallback } from 'react';
 import { Avatar, Button, Card } from 'antd';
+import { useDispatch } from 'react-redux';
+import { logoutAction } from 'reducers';
 
 interface IProps {
-  setIsLoggenIn: Dispatch<SetStateAction<boolean>>;
 }
 
-const UserProfile = ({ setIsLoggenIn }: IProps) => {
+const UserProfile = ({ }: IProps) => {
+  const dispatch = useDispatch();
   const onLogout = useCallback(() => {
-    setIsLoggenIn(false);
+    dispatch(logoutAction());
   }, [])
   return (
     <Card
