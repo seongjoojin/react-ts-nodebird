@@ -1,4 +1,5 @@
 const ADD_POST = 'ADD_POST' as const;
+
 export interface IMainPost {
   id: number;
   User: {
@@ -9,6 +10,7 @@ export interface IMainPost {
   Images: Array<{ src: string }>;
   Comments: Array<{ User: { nickname: string }; content: string}>;
 }
+
 interface PostState {
   mainPosts: IMainPost[];
   imagePaths: string[];
@@ -64,7 +66,7 @@ const dummyPost = {
 
 type PostAction = ReturnType<typeof addPost>;
 
-const reducer = (state = initialState, action: PostAction) => {
+const reducer = (state: PostState = initialState, action: PostAction): PostState => {
   switch (action.type) {
     case ADD_POST:
       return {

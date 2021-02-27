@@ -1,4 +1,4 @@
-import { AnyAction, combineReducers } from "redux";
+import { AnyAction, combineReducers } from 'redux';
 import { HYDRATE } from 'next-redux-wrapper';
 
 import user from './user';
@@ -6,7 +6,7 @@ import post from './post';
 
 
 const rootReducer = combineReducers({
-  index: (state: object = {}, action: AnyAction) => {
+  index: (state: any = {}, action: AnyAction) => {
     switch (action.type) {
       case HYDRATE:
         return { ...state, ...action.payload };

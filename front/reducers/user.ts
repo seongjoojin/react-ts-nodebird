@@ -1,21 +1,26 @@
 const LOG_IN = 'LOG_IN' as const;
 const LOG_OUT = 'LOG_OUT' as const;
 
+interface IMe {
+  id: number;
+  password: string;
+}
+
 interface UserState {
   isLoggedIn: boolean;
-  user: object | null;
+  me: IMe | null;
   signUpData: object;
   loginData: object;
 }
 
 const initialState: UserState = {
-    isLoggedIn: false,
-    user: null,
-    signUpData: {},
-    loginData: {}
-  }
+  isLoggedIn: false,
+  me: null,
+  signUpData: {},
+  loginData: {}
+};
 
-export const loginAction = (data: { id: string; password: string }) => ({
+export const loginAction = (data: IMe) => ({
   type: LOG_IN,
   payload: data,
 });
@@ -28,19 +33,19 @@ type UserAction =
   | ReturnType<typeof loginAction>
   | ReturnType<typeof logoutAction>
 
-const reducer = (state = initialState, action: UserAction) => {
+const reducer = (state: UserState = initialState, action: UserAction): UserState => {
   switch (action.type) {
     case LOG_IN:
       return {
         ...state,
         isLoggedIn: true,
-        user: action.payload,
+        me: action.payload,
       };
     case LOG_OUT:
       return {
         ...state,
         isLoggedIn: false,
-        user: null,
+        me: null,
       };
     default:
       return state;
