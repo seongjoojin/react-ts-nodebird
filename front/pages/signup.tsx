@@ -1,11 +1,11 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import Head from 'next/head';
+import styled from '@emotion/styled';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 import AppLayout from 'components/AppLayout';
 import useInput from 'hooks/useInput';
-import styled from '@emotion/styled';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const Signup = () => {
   const [id, onChangeId] = useInput('');

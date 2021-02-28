@@ -2,6 +2,7 @@ import React, {ChangeEvent, useCallback, useRef, useState} from 'react';
 import {Button, Form, Input} from 'antd';
 import styled from '@emotion/styled';
 import {useDispatch, useSelector} from 'react-redux';
+
 import {RootState} from 'reducers';
 import {addPost} from 'reducers/post';
 

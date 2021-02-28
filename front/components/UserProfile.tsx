@@ -1,6 +1,7 @@
 import React, {  useCallback } from 'react';
 import { Avatar, Button, Card } from 'antd';
 import { useDispatch } from 'react-redux';
+
 import { logoutAction } from 'reducers/user';
 
 interface IProps {

@@ -2,8 +2,9 @@ import React, { useCallback } from 'react';
 import {Button, Form} from 'antd';
 import Link from 'next/link';
 import styled from '@emotion/styled';
-import useInput from 'hooks/useInput';
 import { useDispatch } from 'react-redux';
+
+import useInput from 'hooks/useInput';
 import { loginAction } from 'reducers/user';
 
 interface IProps {

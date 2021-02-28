@@ -1,18 +1,18 @@
-import { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
+import styled from '@emotion/styled';
 
 import UserProfile from 'components/UserProfile';
 import LoginForm from 'components/LoginForm';
-import styled from '@emotion/styled';
 import { RootState } from 'reducers';
 
-type Props = {
+interface IProps {
   children: ReactNode;
-};
+}
 
-const AppLayout: FC<Props> = ({ children }) => {
+const AppLayout= ({ children }:IProps) => {
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   return (
     <div>
