@@ -25,7 +25,7 @@ const PostCard = ({post}: IProps) => {
   return (
     <CardWrapper>
       <Card
-        cover={post.Images[0] && <PostImage image={post.Images} />}
+        cover={post.Images[0] && <PostImage images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
           liked

@@ -27,7 +27,9 @@ const initialState: PostState = {
       },
       content: '첫 번째 게시글',
       Images: [
-        { src: 'https://gimg.gilbut.co.kr/book/BN002045/rn_view_BN002045.jpg' },
+        { src: 'https://thebook.io/img/covers/cover_080229.jpg' },
+        { src: 'https://thebook.io/img/covers/cover_006934.jpg' },
+        { src: 'https://thebook.io/img/covers/cover_080203.jpg' },
       ],
       Comments: [
         {

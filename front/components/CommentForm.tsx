@@ -1,7 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {Button, Form, Input} from 'antd';
 import {useSelector} from 'react-redux';
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 import {IMainPost} from 'reducers/post';
 import useInput from 'hooks/useInput';
