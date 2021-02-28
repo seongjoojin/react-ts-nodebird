@@ -3,10 +3,12 @@ import {IMainPost} from 'reducers/post';
 import {Card, Popover, Button, Avatar, List, Comment} from 'antd';
 import {RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined} from '@ant-design/icons';
 import {useSelector} from 'react-redux';
+import styled from '@emotion/styled';
+
 import {RootState} from 'reducers';
 import PostImage from 'components/PostImage';
 import CommentForm from 'components/CommentForm';
-import styled from '@emotion/styled';
+import PostCardContent from './PostCardContent';
 
 interface IProps {
   post: IMainPost
@@ -49,7 +51,7 @@ const PostCard = ({post}: IProps) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (

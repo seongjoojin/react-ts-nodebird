@@ -25,7 +25,7 @@ const initialState: PostState = {
         id: 1,
         nickname: 'evanjin',
       },
-      content: '첫 번째 게시글',
+      content: '첫 번째 게시글 #게시글 #익스프레스',
       Images: [
         { src: 'https://thebook.io/img/covers/cover_080229.jpg' },
         { src: 'https://thebook.io/img/covers/cover_006934.jpg' },
