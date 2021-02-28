@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
 import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
+import { Global, css } from '@emotion/react';
 
 import UserProfile from 'components/UserProfile';
 import LoginForm from 'components/LoginForm';
@@ -16,6 +17,20 @@ const AppLayout= ({ children }:IProps) => {
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   return (
     <div>
+      <Global
+        styles={css`
+          .ant-row {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+          }
+          .ant-col:first-child {
+            padding-left: 0 !important;
+          }
+          .ant-col:last-child {
+            padding-right: 0 !important;
+          }
+        `}
+      />
       <Menu mode="horizontal">
         <Menu.Item>
           <Link href="/">
