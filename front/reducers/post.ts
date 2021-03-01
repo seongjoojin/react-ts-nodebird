@@ -1,4 +1,23 @@
-const ADD_POST = 'ADD_POST' as const;
+export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
+export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
+export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
+
+interface AddPostRequestAction {
+  type: typeof ADD_POST_REQUEST
+}
+
+interface AddPostSuccessAction {
+  type: typeof ADD_POST_SUCCESS
+}
+
+interface AddPostFailureAction {
+  type: typeof ADD_POST_FAILURE
+}
+
+type PostActionTypes =
+  | AddPostRequestAction
+  | AddPostSuccessAction
+  | AddPostFailureAction
 
 export interface IMainPost {
   id: number;
@@ -51,8 +70,8 @@ const initialState: PostState = {
   postAdded: false,
 };
 
-export const addPost = () => ({
-  type: ADD_POST,
+export const addPostRequestAction = () => ({
+  type: ADD_POST_REQUEST,
 });
 
 const dummyPost = {
@@ -64,17 +83,23 @@ const dummyPost = {
   },
   Images: [],
   Comments: []
-} 
+};
 
-type PostAction = ReturnType<typeof addPost>;
-
-const reducer = (state: PostState = initialState, action: PostAction): PostState => {
+const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => {
   switch (action.type) {
-    case ADD_POST:
+    case ADD_POST_REQUEST:
+      return {
+        ...state
+      };
+    case ADD_POST_SUCCESS:
       return {
         ...state,
         mainPosts: [dummyPost, ...state.mainPosts],
         postAdded: true,
+      };
+    case ADD_POST_FAILURE:
+      return {
+        ...state
       };
     default:
       return state;

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {RootState} from 'reducers';
-import {addPost} from 'reducers/post';
+import {addPostRequestAction} from 'reducers/post';
 
 const PostFrom = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const PostFrom = () => {
   }, []);
   const imageInput = useRef<HTMLInputElement>(null);
   const onSubmit = useCallback(() => {
-    dispatch(addPost());
+    dispatch(addPostRequestAction());
     setText('');
   },[]);
   const onClickImageUpload = useCallback(() => {

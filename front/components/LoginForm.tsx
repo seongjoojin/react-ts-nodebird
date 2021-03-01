@@ -2,22 +2,24 @@ import React, { useCallback } from 'react';
 import {Button, Form} from 'antd';
 import Link from 'next/link';
 import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import useInput from 'hooks/useInput';
-import { loginAction } from 'reducers/user';
+import { loginRequestAction } from 'reducers/user';
+import {RootState} from 'reducers';
 
 interface IProps {
 }
 
 const LoginForm = ({ }: IProps) => {
   const dispatch = useDispatch();
+  const {isLoggingIn} = useSelector((state: RootState) =>  state.user);
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
-    dispatch(loginAction({ id, password }));
+    dispatch(loginRequestAction({ id, password }));
   }, [id, password]);
 
   return (
@@ -39,7 +41,7 @@ const LoginForm = ({ }: IProps) => {
         />
       </div>
       <ButtonWrapper>
-        <Button type="primary" htmlType="submit" loading={false}>
+        <Button type="primary" htmlType="submit" loading={isLoggingIn}>
           로그인
         </Button>
         <Link href="/signup">
