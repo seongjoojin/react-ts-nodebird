@@ -1,9 +1,22 @@
+export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
+
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
 interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST
+  payload: IMainPost[]
 }
 
 interface AddPostSuccessAction {
@@ -11,13 +24,31 @@ interface AddPostSuccessAction {
 }
 
 interface AddPostFailureAction {
-  type: typeof ADD_POST_FAILURE
+  type: typeof ADD_POST_FAILURE,
+  error: object
+}
+
+interface AddCommentRequestAction {
+  type: typeof ADD_COMMENT_REQUEST
+  payload: any
+}
+
+interface AddCommentSuccessAction {
+  type: typeof ADD_COMMENT_SUCCESS
+}
+
+interface AddCommentFailureAction {
+  type: typeof ADD_COMMENT_FAILURE,
+  error: object
 }
 
 type PostActionTypes =
   | AddPostRequestAction
   | AddPostSuccessAction
   | AddPostFailureAction
+  | AddCommentRequestAction
+  | AddCommentSuccessAction
+  | AddCommentFailureAction
 
 export interface IMainPost {
   id: number;
@@ -33,7 +64,12 @@ export interface IMainPost {
 interface PostState {
   mainPosts: IMainPost[];
   imagePaths: string[];
-  postAdded: boolean;
+  addPostLoading: boolean;
+  addPostDone: boolean;
+  addPostError: object | null;
+  addCommentLoading: boolean,
+  addCommentDone: boolean,
+  addCommentError: object | null,
 }
 
 const initialState: PostState = {
@@ -67,11 +103,22 @@ const initialState: PostState = {
     },
   ],
   imagePaths: [],
-  postAdded: false,
+  addPostLoading: false,
+  addPostDone: false,
+  addPostError: null,
+  addCommentLoading: false,
+  addCommentDone: false,
+  addCommentError: null,
 };
 
-export const addPostRequestAction = () => ({
+export const addPostRequestAction = (data: IMainPost[]) => ({
   type: ADD_POST_REQUEST,
+  payload: data,
+});
+
+export const addCommentRequestAction = (data: any) => ({
+  type: ADD_COMMENT_REQUEST,
+  payload: data,
 });
 
 const dummyPost = {
@@ -89,17 +136,42 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
   switch (action.type) {
     case ADD_POST_REQUEST:
       return {
-        ...state
+        ...state,
+        addPostLoading: true,
+        addPostDone: false,
+        addPostError: null
       };
     case ADD_POST_SUCCESS:
       return {
         ...state,
         mainPosts: [dummyPost, ...state.mainPosts],
-        postAdded: true,
+        addPostLoading: false,
+        addPostDone: true,
       };
     case ADD_POST_FAILURE:
       return {
-        ...state
+        ...state,
+        addPostLoading: false,
+        addPostError: action.error,
+      };
+    case ADD_COMMENT_REQUEST:
+      return {
+        ...state,
+        addCommentLoading: true,
+        addCommentDone: false,
+        addCommentError: null
+      };
+    case ADD_COMMENT_SUCCESS:
+      return {
+        ...state,
+        addCommentLoading: false,
+        addCommentDone: true,
+      };
+    case ADD_COMMENT_FAILURE:
+      return {
+        ...state,
+        addCommentLoading: false,
+        addCommentError: action.error,
       };
     default:
       return state;

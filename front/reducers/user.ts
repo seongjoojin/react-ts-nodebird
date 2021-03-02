@@ -1,3 +1,5 @@
+import {IMainPost} from './post';
+
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -6,15 +8,30 @@ export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+
+export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
+export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
+export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
+
+export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
+export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
+export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
 interface IMe {
   id: string;
-  password?: string;
-  nickname?: string;
+  password: string;
+  nickname: string;
+  Posts: IMainPost[];
+  Followings: Array<{nickname: string}>
+  Followers: Array<{nickname: string}>
 }
 
 export interface LoginRequestAction {
   type: typeof LOG_IN_REQUEST
-  payload: IMe
+  payload: {id: string; password: string}
 }
 
 interface LoginSuccessAction {
@@ -24,6 +41,7 @@ interface LoginSuccessAction {
 
 interface LoginFailureAction {
   type: typeof LOG_IN_FAILURE
+  error: object
 }
 
 interface LogoutRequestAction {
@@ -36,6 +54,20 @@ interface LogoutSuccessAction {
 
 interface LogoutFailureAction {
   type: typeof LOG_OUT_FAILURE
+  error: object
+}
+
+interface SignUpRequestAction {
+  type: typeof SIGN_UP_REQUEST
+}
+
+interface SignUpSuccessAction {
+  type: typeof SIGN_UP_SUCCESS
+}
+
+interface SignUpFailureAction {
+  type: typeof SIGN_UP_FAILURE
+  error: object
 }
 
 export type UserActionTypes =
@@ -45,24 +77,48 @@ export type UserActionTypes =
   | LogoutRequestAction
   | LogoutSuccessAction
   | LogoutFailureAction
+  | SignUpRequestAction
+  | SignUpSuccessAction
+  | SignUpFailureAction
 
 interface UserState {
-  isLoggingIn: boolean; // 로그인 시도중
-  isLoggedIn: boolean;
-  isLoggingOut: boolean; // 로그아웃 시도중
+  logInLoading: boolean; // 로그인 시도중
+  logInDone: boolean;
+  logInError: object | null;
+  logOutLoading: boolean; // 로그아웃 시도중
+  logOutDone: boolean;
+  logOutError: object | null;
+  signUpLoading: boolean; // 회원가입 시도중
+  signUpDone: boolean;
+  signUpError: object | null;
   me: IMe | null;
   signUpData: object;
   loginData: object;
 }
 
 const initialState: UserState = {
-  isLoggingIn: false,
-  isLoggingOut: false,
-  isLoggedIn: false,
+  logInLoading: false,
+  logInDone: false,
+  logInError: null,
+  logOutLoading: false,
+  logOutDone: false,
+  logOutError: null,
+  signUpLoading: false,
+  signUpDone: false,
+  signUpError: null,
   me: null,
   signUpData: {},
   loginData: {}
 };
+
+const dummyUser = (data: {id: string; password: string;}) => ({
+  ...data,
+  nickname: '에반진',
+  id: 1,
+  Posts: [],
+  Followings: [],
+  Followers: []
+});
 
 export const loginRequestAction = (data: IMe): UserActionTypes => ({
   type: LOG_IN_REQUEST,
@@ -79,37 +135,61 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
     case LOG_IN_REQUEST:
       return {
         ...state,
-        isLoggingIn: true,
+        logInLoading: true,
+        logInError: null,
+        logInDone: false
       };
     case LOG_IN_SUCCESS:
       return {
         ...state,
-        isLoggingIn: false,
-        isLoggedIn: true,
-        me: {...action.payload, nickname: 'evanjin'},
+        logInLoading: false,
+        logInDone: true,
+        me: dummyUser(action.payload),
       };
     case LOG_IN_FAILURE:
       return {
         ...state,
-        isLoggingIn: false,
-        isLoggedIn: false
+        logInLoading: false,
+        logInError: action.error
       };
     case LOG_OUT_REQUEST:
       return {
         ...state,
-        isLoggingOut: true,
+        logOutLoading: true,
+        logOutDone: false,
+        logOutError: null,
       };
     case LOG_OUT_SUCCESS:
       return {
         ...state,
-        isLoggedIn: false,
-        isLoggingOut: false,
+        logOutLoading: false,
+        logOutDone: true,
         me: null,
       };
     case LOG_OUT_FAILURE:
       return {
         ...state,
-        isLoggingOut: false,
+        logOutLoading: false,
+        logOutError: action.error,
+      };
+    case SIGN_UP_REQUEST:
+      return {
+        ...state,
+        signUpLoading: true,
+        signUpDone: false,
+        signUpError: null,
+      };
+    case SIGN_UP_SUCCESS:
+      return {
+        ...state,
+        signUpLoading: false,
+        signUpDone: true,
+      };
+    case SIGN_UP_FAILURE:
+      return {
+        ...state,
+        signUpLoading: false,
+        signUpError: action.error,
       };
     default:
       return state;

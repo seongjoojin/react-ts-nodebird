@@ -7,8 +7,10 @@ import {
   LOG_OUT_FAILURE,
   LOG_OUT_REQUEST,
   LOG_OUT_SUCCESS,
-  LoginRequestAction,
+  LoginRequestAction, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS,
 } from 'reducers/user';
+
+function loginAPI() {}
 
 function* login(action: LoginRequestAction) {
   try {
@@ -21,7 +23,7 @@ function* login(action: LoginRequestAction) {
   } catch (err) {
     yield put({
       type: LOG_IN_FAILURE,
-      data: err.response.data
+      error: err.response.data
     });
   }
 }
@@ -29,6 +31,8 @@ function* login(action: LoginRequestAction) {
 function* watchLogin() {
   yield takeLatest(LOG_IN_REQUEST, login);
 }
+
+function logOutAPI() {}
 
 function* logout() {
   try {
@@ -40,7 +44,7 @@ function* logout() {
   } catch (err) {
     yield put({
       type: LOG_OUT_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -49,10 +53,32 @@ function* watchLogout() {
   yield takeLatest(LOG_OUT_REQUEST, logout);
 }
 
+function signUpAPI() {}
+
+function* signUp() {
+  try {
+    // const result = yield call(signUpAPI);
+    yield delay(1000);
+    yield put({
+      type: SIGN_UP_SUCCESS,
+    });
+  } catch (err) {
+    yield put({
+      type: SIGN_UP_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* watchSignUp() {
+  yield takeLatest(SIGN_UP_REQUEST, signUp);
+}
+
 
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
-    fork(watchLogout)
+    fork(watchLogout),
+    fork(watchSignUp),
   ]);
 }
