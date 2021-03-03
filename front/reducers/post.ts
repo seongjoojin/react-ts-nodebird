@@ -16,11 +16,12 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
 interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST
-  payload: IMainPost[]
+  data: string
 }
 
 interface AddPostSuccessAction {
   type: typeof ADD_POST_SUCCESS
+  data: IMainPost[]
 }
 
 interface AddPostFailureAction {
@@ -30,7 +31,7 @@ interface AddPostFailureAction {
 
 interface AddCommentRequestAction {
   type: typeof ADD_COMMENT_REQUEST
-  payload: any
+  data: { content: string, postId: number, userId: string | undefined }
 }
 
 interface AddCommentSuccessAction {
@@ -48,7 +49,7 @@ type PostActionTypes =
   | AddPostFailureAction
   | AddCommentRequestAction
   | AddCommentSuccessAction
-  | AddCommentFailureAction
+  | AddCommentFailureAction;
 
 export interface IMainPost {
   id: number;
@@ -58,7 +59,7 @@ export interface IMainPost {
   };
   content: string;
   Images: Array<{ src: string }>;
-  Comments: Array<{ User: { nickname: string }; content: string}>;
+  Comments: Array<{ User: { nickname: string }; content: string }>;
 }
 
 interface PostState {
@@ -111,14 +112,16 @@ const initialState: PostState = {
   addCommentError: null,
 };
 
-export const addPostRequestAction = (data: IMainPost[]) => ({
+export const addPostRequestAction = (data: string) => ({
   type: ADD_POST_REQUEST,
-  payload: data,
+  data,
 });
 
-export const addCommentRequestAction = (data: any) => ({
+export const addCommentRequestAction = (data: {
+  content: string, postId: number, userId: string | undefined
+}) => ({
   type: ADD_COMMENT_REQUEST,
-  payload: data,
+  data,
 });
 
 const dummyPost = {
@@ -126,10 +129,10 @@ const dummyPost = {
   content: '더미데이터입니다.',
   User: {
     id: 1,
-    nickname: '제로초'
+    nickname: '제로초',
   },
   Images: [],
-  Comments: []
+  Comments: [],
 };
 
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => {
@@ -139,7 +142,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
         ...state,
         addPostLoading: true,
         addPostDone: false,
-        addPostError: null
+        addPostError: null,
       };
     case ADD_POST_SUCCESS:
       return {
@@ -159,7 +162,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
         ...state,
         addCommentLoading: true,
         addCommentDone: false,
-        addCommentError: null
+        addCommentError: null,
       };
     case ADD_COMMENT_SUCCESS:
       return {

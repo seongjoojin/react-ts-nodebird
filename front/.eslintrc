@@ -1,10 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2021,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "project": "./tsconfig.json"
   },
   "env": {
     "browser": true,
@@ -12,17 +8,23 @@
     "es6": true
   },
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "airbnb-typescript"
   ],
   "plugins": [
     "import",
-    "react-hooks"
+    "react-hooks",
+    "jsx-a11y"
   ],
   "rules": {
-    "semi": ["error", "always"],
-    "quotes": ["error", "single"]
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-console": "off",
+    "no-underscore-dangle": "off",
+    "react/forbid-prop-types": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "object-curly-newline": "off",
+    "linebreak-style": "off",
+    "no-param-reassign": "off"
   }
 }

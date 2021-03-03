@@ -1,4 +1,4 @@
-import {IMainPost} from './post';
+import { IMainPost } from './post';
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -21,22 +21,23 @@ export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
 interface IMe {
-  id: string;
+  email: string;
   password: string;
+  id: number;
   nickname: string;
   Posts: IMainPost[];
-  Followings: Array<{nickname: string}>
-  Followers: Array<{nickname: string}>
+  Followings: Array<{ nickname: string }>
+  Followers: Array<{ nickname: string }>
 }
 
 export interface LoginRequestAction {
   type: typeof LOG_IN_REQUEST
-  payload: {id: string; password: string}
+  data: { email: string; password: string }
 }
 
 interface LoginSuccessAction {
   type: typeof LOG_IN_SUCCESS
-  payload: IMe
+  data: { email: string; password: string }
 }
 
 interface LoginFailureAction {
@@ -59,10 +60,12 @@ interface LogoutFailureAction {
 
 interface SignUpRequestAction {
   type: typeof SIGN_UP_REQUEST
+  data: { email: string; password: string; nickname: string; }
 }
 
 interface SignUpSuccessAction {
   type: typeof SIGN_UP_SUCCESS
+  data: { email: string; password: string; nickname: string; }
 }
 
 interface SignUpFailureAction {
@@ -79,7 +82,7 @@ export type UserActionTypes =
   | LogoutFailureAction
   | SignUpRequestAction
   | SignUpSuccessAction
-  | SignUpFailureAction
+  | SignUpFailureAction;
 
 interface UserState {
   logInLoading: boolean; // 로그인 시도중
@@ -108,23 +111,22 @@ const initialState: UserState = {
   signUpError: null,
   me: null,
   signUpData: {},
-  loginData: {}
+  loginData: {},
 };
 
-const dummyUser = (data: {id: string; password: string;}) => ({
+const dummyUser = (data: { email: string; password: string }) => ({
   ...data,
   nickname: '에반진',
   id: 1,
   Posts: [],
   Followings: [],
-  Followers: []
+  Followers: [],
 });
 
-export const loginRequestAction = (data: IMe): UserActionTypes => ({
+export const loginRequestAction = (data: { email: string; password: string }): UserActionTypes => ({
   type: LOG_IN_REQUEST,
-  payload: data,
+  data,
 });
-
 
 export const logoutRequestAction = (): UserActionTypes => ({
   type: LOG_OUT_REQUEST,
@@ -137,20 +139,20 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
         ...state,
         logInLoading: true,
         logInError: null,
-        logInDone: false
+        logInDone: false,
       };
     case LOG_IN_SUCCESS:
       return {
         ...state,
         logInLoading: false,
         logInDone: true,
-        me: dummyUser(action.payload),
+        me: dummyUser(action.data),
       };
     case LOG_IN_FAILURE:
       return {
         ...state,
         logInLoading: false,
-        logInError: action.error
+        logInError: action.error,
       };
     case LOG_OUT_REQUEST:
       return {

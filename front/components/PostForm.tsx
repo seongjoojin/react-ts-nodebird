@@ -1,33 +1,55 @@
-import React, {ChangeEvent, useCallback, useRef, useState} from 'react';
-import {Button, Form, Input} from 'antd';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { Button, Form, Input } from 'antd';
 import styled from '@emotion/styled';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import {RootState} from 'reducers';
-import {addPostRequestAction} from 'reducers/post';
+import { RootState } from '../reducers';
+import { addPostRequestAction } from '../reducers/post';
+import useInput from '../hooks/useInput';
+
+const FormWrapper = styled(Form)`
+  margin: 10px 0 20px;
+`;
+
+const SubmitButton = styled(Button)`
+  float: right;
+`;
+
+const PostImageBox = styled.div`
+  display: inline-block;
+`;
+
+const PostImage = styled.img`
+  width: 200px;
+`;
 
 const PostFrom = () => {
   const dispatch = useDispatch();
-  const imagePaths = useSelector((state: RootState) => state.post.imagePaths);
-  const [text, setText] = useState('');
-  const onChangeText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-  }, []);
-  const imageInput = useRef<HTMLInputElement>(null);
+  const { imagePaths, addPostDone } = useSelector((state: RootState) => state.post);
+  const [text, onChangeText, setText] = useInput<HTMLTextAreaElement>('');
+
+  useEffect(() => {
+    if (addPostDone) {
+      setText('');
+    }
+  }, [addPostDone]);
+
   const onSubmit = useCallback(() => {
-    dispatch(addPostRequestAction());
-    setText('');
-  },[]);
+    dispatch(addPostRequestAction(text));
+  }, [text]);
+
+  const imageInput = useRef<HTMLInputElement>(null);
   const onClickImageUpload = useCallback(() => {
     imageInput.current?.click();
   }, [imageInput.current]);
+
   return (
     <FormWrapper encType="multipart/form-data" onFinish={onSubmit}>
       <Input.TextArea
         value={text}
         onChange={onChangeText}
         maxLength={140}
-        placeholder={'어떤 신기한 일이 있었나요?'}
+        placeholder="어떤 신기한 일이 있었나요?"
       />
       <div>
         <input type="file" multiple hidden ref={imageInput} />
@@ -47,21 +69,5 @@ const PostFrom = () => {
     </FormWrapper>
   );
 };
-
-const FormWrapper = styled(Form)`
-  margin: 10px 0 20px;
-`;
-
-const SubmitButton = styled(Button)`
-  float: right;
-`;
-
-const PostImageBox = styled.div`
-  display: inline-block;
-`;
-
-const PostImage = styled.img`
-  width: 200px;
-`;
 
 export default PostFrom;

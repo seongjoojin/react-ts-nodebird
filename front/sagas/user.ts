@@ -1,4 +1,4 @@
-import {all, delay, fork, put, takeLatest} from 'redux-saga/effects';
+import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
   LOG_IN_FAILURE,
@@ -18,12 +18,12 @@ function* login(action: LoginRequestAction) {
     // yield delay(1000);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.payload
+      data: action.data,
     });
   } catch (err) {
     yield put({
       type: LOG_IN_FAILURE,
-      error: err.response.data
+      error: err.response.data,
     });
   }
 }
@@ -73,7 +73,6 @@ function* signUp() {
 function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
-
 
 export default function* userSaga() {
   yield all([

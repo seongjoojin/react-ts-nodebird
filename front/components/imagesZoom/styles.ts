@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
-import {CloseOutlined} from "@ant-design/icons";
+import styled from '@emotion/styled';
+import { CloseOutlined } from '@ant-design/icons';
 
 export const Overlay = styled.div`
   position: fixed;

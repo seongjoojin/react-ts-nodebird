@@ -1,22 +1,47 @@
-import React, {useCallback} from 'react';
-import {Button, Form, Input} from 'antd';
-import {useSelector} from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { Button, Form, Input } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
-import {IMainPost} from 'reducers/post';
-import useInput from 'hooks/useInput';
-import {RootState} from 'reducers';
+import { ADD_COMMENT_REQUEST, IMainPost } from '../reducers/post';
+import useInput from '../hooks/useInput';
+import { RootState } from '../reducers';
+
+const FormItem = styled(Form.Item)`
+  position: relative;
+  margin: 0;
+`;
+
+const SubmitButton = styled(Button)`
+  position: absolute;
+  right: 0;
+  bottom: -40px;
+`;
 
 interface IProps {
   post: IMainPost
 }
 
-const CommentForm = ({post}: IProps) => {
+const CommentForm = ({ post }: IProps) => {
+  const dispatch = useDispatch();
   const id = useSelector((state: RootState) => state.user.me?.id);
-  const [commentText, onChangeCommentText] = useInput<HTMLTextAreaElement>('');
+  const { addCommentDone } = useSelector((state: RootState) => state.post);
+  const [commentText, onChangeCommentText, setCommentText] = useInput<HTMLTextAreaElement>('');
+
   const onSubmitComment = useCallback(() => {
     console.log(post.id, commentText);
-  }, [commentText]);
+    dispatch({
+      type: ADD_COMMENT_REQUEST,
+      data: { content: commentText, postId: post.id, userId: id },
+    });
+  }, [commentText, id]);
+
+  useEffect(() => {
+    if (addCommentDone) {
+      setCommentText('');
+    }
+  }, [addCommentDone]);
+
   return (
     <Form onFinish={onSubmitComment}>
       <FormItem>
@@ -30,16 +55,5 @@ const CommentForm = ({post}: IProps) => {
     </Form>
   );
 };
-
-const FormItem = styled(Form.Item)`
-  position: relative;
-  margin: 0;
-`;
-
-const SubmitButton = styled(Button)`
-  position: absolute;
-  right: 0;
-  bottom: -40px;
-`;
 
 export default CommentForm;

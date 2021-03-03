@@ -4,7 +4,6 @@ import { HYDRATE } from 'next-redux-wrapper';
 import user from './user';
 import post from './post';
 
-
 const rootReducer = combineReducers({
   index: (state: any = {}, action: AnyAction) => {
     switch (action.type) {
@@ -17,7 +16,6 @@ const rootReducer = combineReducers({
   user,
   post,
 });
-
 
 export type RootState = ReturnType<typeof rootReducer>;
 

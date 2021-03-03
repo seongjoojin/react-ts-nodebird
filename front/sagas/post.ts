@@ -1,11 +1,11 @@
-import {all, delay, fork, put, takeLatest} from 'redux-saga/effects';
+import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
-  ADD_POST_SUCCESS
-} from "../reducers/post";
+  ADD_POST_SUCCESS,
+} from '../reducers/post';
 
 function addPostAPI() {
 
@@ -28,7 +28,6 @@ function* addPost() {
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
-
 
 function addCommentAPI() {
 

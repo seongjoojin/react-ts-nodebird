@@ -5,16 +5,20 @@ import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { Global, css } from '@emotion/react';
 
-import UserProfile from 'components/UserProfile';
-import LoginForm from 'components/LoginForm';
-import { RootState } from 'reducers';
+import UserProfile from './UserProfile';
+import LoginForm from './LoginForm';
+import { RootState } from '../reducers';
+
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
 
 interface IProps {
   children: ReactNode;
 }
 
-const AppLayout= ({ children }:IProps) => {
-  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+const AppLayout = ({ children }:IProps) => {
+  const { me } = useSelector((state: RootState) => state.user);
   return (
     <div>
       <Global
@@ -53,10 +57,10 @@ const AppLayout= ({ children }:IProps) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? (
+          {me ? (
             <UserProfile />
           ) : (
-            <LoginForm  />
+            <LoginForm />
           )}
         </Col>
         <Col xs={24} md={12}>
@@ -75,9 +79,5 @@ const AppLayout= ({ children }:IProps) => {
     </div>
   );
 };
-
-const SearchInput = styled(Input.Search)`
-  vertical-align: middle;
-`;
 
 export default AppLayout;

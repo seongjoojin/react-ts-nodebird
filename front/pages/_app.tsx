@@ -1,24 +1,22 @@
 import React from 'react';
 import Head from 'next/head';
 import { AppProps, AppContext } from 'next/app';
-import {END} from 'redux-saga';
+import { END } from 'redux-saga';
 import 'antd/dist/antd.css';
 
-import wrapper, {SagaStore} from 'store/configureStore';
+import wrapper, { SagaStore } from '../store/configureStore';
 
-const App = ({ Component, pageProps }: AppProps) => {
-  return (
-    <>
-      <Head>
-        <meta charSet="utf-8" />
-        <title>NodeBird</title>
-      </Head>
-      <Component {...pageProps} />
-    </>
-  );
-};
+const App = ({ Component, pageProps }: AppProps) => (
+  <>
+    <Head>
+      <meta charSet="utf-8" />
+      <title>NodeBird</title>
+    </Head>
+    <Component {...pageProps} />
+  </>
+);
 
-App.getInitialProps = async ({Component, ctx}: AppContext) => {
+App.getInitialProps = async ({ Component, ctx }: AppContext) => {
   // 1. Wait for all page actions to dispatch
   const pageProps = {
     ...(Component.getInitialProps ? await Component.getInitialProps(ctx) : {}),
