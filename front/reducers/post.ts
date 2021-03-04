@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
@@ -14,31 +16,32 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
-interface AddPostRequestAction {
+export interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST
   data: string
 }
 
-interface AddPostSuccessAction {
+export interface AddPostSuccessAction {
   type: typeof ADD_POST_SUCCESS
-  data: IMainPost[]
+  data: string
 }
 
-interface AddPostFailureAction {
+export interface AddPostFailureAction {
   type: typeof ADD_POST_FAILURE,
   error: object
 }
 
-interface AddCommentRequestAction {
+export interface AddCommentRequestAction {
   type: typeof ADD_COMMENT_REQUEST
-  data: { content: string, postId: number, userId: string | undefined }
+  data: { content: string, postId: number, userId: number }
 }
 
-interface AddCommentSuccessAction {
-  type: typeof ADD_COMMENT_SUCCESS
+export interface AddCommentSuccessAction {
+  type: typeof ADD_COMMENT_SUCCESS;
+  data: { content: string; postId: number; userId: number };
 }
 
-interface AddCommentFailureAction {
+export interface AddCommentFailureAction {
   type: typeof ADD_COMMENT_FAILURE,
   error: object
 }
@@ -124,16 +127,25 @@ export const addCommentRequestAction = (data: {
   data,
 });
 
-const dummyPost = {
-  id: 2,
-  content: '더미데이터입니다.',
+const dummyPost = (data: string) => ({
+  id: nanoid(),
+  content: data,
   User: {
     id: 1,
     nickname: '제로초',
   },
   Images: [],
   Comments: [],
-};
+});
+
+const dummyComment = (data: string) => ({
+  id: nanoid(),
+  content: data,
+  User: {
+    id: 1,
+    nickname: '제로초',
+  },
+});
 
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => {
   switch (action.type) {
@@ -147,7 +159,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
     case ADD_POST_SUCCESS:
       return {
         ...state,
-        mainPosts: [dummyPost, ...state.mainPosts],
+        mainPosts: [dummyPost(action.data), ...state.mainPosts],
         addPostLoading: false,
         addPostDone: true,
       };
@@ -164,12 +176,19 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
         addCommentDone: false,
         addCommentError: null,
       };
-    case ADD_COMMENT_SUCCESS:
+    case ADD_COMMENT_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const post = { ...state.mainPosts[postIndex] };
+      post.Comments = [dummyComment(action.data.content), ...post.Comments];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = post;
       return {
         ...state,
+        mainPosts,
         addCommentLoading: false,
         addCommentDone: true,
       };
+    }
     case ADD_COMMENT_FAILURE:
       return {
         ...state,

@@ -12,6 +12,10 @@ export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+
 export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
 export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
 export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
@@ -35,41 +39,54 @@ export interface LoginRequestAction {
   data: { email: string; password: string }
 }
 
-interface LoginSuccessAction {
+export interface LoginSuccessAction {
   type: typeof LOG_IN_SUCCESS
   data: { email: string; password: string }
 }
 
-interface LoginFailureAction {
+export interface LoginFailureAction {
   type: typeof LOG_IN_FAILURE
   error: object
 }
 
-interface LogoutRequestAction {
+export interface LogoutRequestAction {
   type: typeof LOG_OUT_REQUEST
 }
 
-interface LogoutSuccessAction {
+export interface LogoutSuccessAction {
   type: typeof LOG_OUT_SUCCESS
 }
 
-interface LogoutFailureAction {
+export interface LogoutFailureAction {
   type: typeof LOG_OUT_FAILURE
   error: object
 }
 
-interface SignUpRequestAction {
+export interface SignUpRequestAction {
   type: typeof SIGN_UP_REQUEST
   data: { email: string; password: string; nickname: string; }
 }
 
-interface SignUpSuccessAction {
+export interface SignUpSuccessAction {
   type: typeof SIGN_UP_SUCCESS
   data: { email: string; password: string; nickname: string; }
 }
 
-interface SignUpFailureAction {
+export interface SignUpFailureAction {
   type: typeof SIGN_UP_FAILURE
+  error: object
+}
+
+export interface ChangeNickNameRequestAction {
+  type: typeof CHANGE_NICKNAME_REQUEST
+}
+
+export interface ChangeNickNameSuccessAction {
+  type: typeof CHANGE_NICKNAME_SUCCESS
+}
+
+export interface ChangeNickNameFailureAction {
+  type: typeof CHANGE_NICKNAME_FAILURE
   error: object
 }
 
@@ -82,7 +99,10 @@ export type UserActionTypes =
   | LogoutFailureAction
   | SignUpRequestAction
   | SignUpSuccessAction
-  | SignUpFailureAction;
+  | SignUpFailureAction
+  | ChangeNickNameRequestAction
+  | ChangeNickNameSuccessAction
+  | ChangeNickNameFailureAction;
 
 interface UserState {
   logInLoading: boolean; // 로그인 시도중
@@ -94,6 +114,9 @@ interface UserState {
   signUpLoading: boolean; // 회원가입 시도중
   signUpDone: boolean;
   signUpError: object | null;
+  changeNicknameLoading: boolean; // 닉네임 변경 시도중
+  changeNicknameDone: boolean;
+  changeNicknameError: object | null;
   me: IMe | null;
   signUpData: object;
   loginData: object;
@@ -109,6 +132,9 @@ const initialState: UserState = {
   signUpLoading: false,
   signUpDone: false,
   signUpError: null,
+  changeNicknameLoading: false,
+  changeNicknameDone: false,
+  changeNicknameError: null,
   me: null,
   signUpData: {},
   loginData: {},
@@ -192,6 +218,25 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
         ...state,
         signUpLoading: false,
         signUpError: action.error,
+      };
+    case CHANGE_NICKNAME_REQUEST:
+      return {
+        ...state,
+        changeNicknameLoading: true,
+        changeNicknameDone: false,
+        changeNicknameError: null,
+      };
+    case CHANGE_NICKNAME_SUCCESS:
+      return {
+        ...state,
+        changeNicknameLoading: false,
+        changeNicknameDone: true,
+      };
+    case CHANGE_NICKNAME_FAILURE:
+      return {
+        ...state,
+        changeNicknameLoading: false,
+        changeNicknameError: action.error,
       };
     default:
       return state;

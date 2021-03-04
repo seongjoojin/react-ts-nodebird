@@ -1,5 +1,7 @@
 import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import {
+  AddCommentRequestAction,
+  AddPostRequestAction,
   ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
   ADD_POST_FAILURE,
@@ -11,11 +13,12 @@ function addPostAPI() {
 
 }
 
-function* addPost() {
+function* addPost(action: AddPostRequestAction) {
   try {
     yield delay(2000);
     yield put({
       type: ADD_POST_SUCCESS,
+      data: action.data,
     });
   } catch (err) {
     yield put({
@@ -33,11 +36,12 @@ function addCommentAPI() {
 
 }
 
-function* addComment() {
+function* addComment(action: AddCommentRequestAction) {
   try {
     yield delay(2000);
     yield put({
       type: ADD_COMMENT_SUCCESS,
+      data: action.data,
     });
   } catch (err) {
     yield put({

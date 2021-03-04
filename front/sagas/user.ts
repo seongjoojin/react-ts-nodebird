@@ -15,7 +15,7 @@ function loginAPI() {}
 function* login(action: LoginRequestAction) {
   try {
     // yield call(loginAPI);
-    // yield delay(1000);
+    yield delay(1000);
     yield put({
       type: LOG_IN_SUCCESS,
       data: action.data,
