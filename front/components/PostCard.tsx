@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { IMainPost } from 'reducers/post';
+import { IMainPost, REMOVE_POST_REQUEST } from 'reducers/post';
 import { Card, Popover, Button, Avatar, List, Comment } from 'antd';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
 import { RootState } from '../reducers';
@@ -19,6 +19,8 @@ interface IProps {
 }
 
 const PostCard = ({ post }: IProps) => {
+  const dispatch = useDispatch();
+  const { removePostLoading } = useSelector((state: RootState) => state.post);
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const id = useSelector((state: RootState) => state.user.me?.id);
@@ -27,6 +29,13 @@ const PostCard = ({ post }: IProps) => {
   }, []);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prevState) => !prevState);
+  }, []);
+
+  const onRemovePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
   return (
     <CardWrapper>
@@ -45,7 +54,7 @@ const PostCard = ({ post }: IProps) => {
                 {id && post.User.id === id ? (
                   <>
                     <Button>수정</Button>
-                    <Button danger>삭제</Button>
+                    <Button danger loading={removePostLoading} onClick={onRemovePost}>삭제</Button>
                   </>
                 ) : <Button>신고</Button>}
               </Button.Group>

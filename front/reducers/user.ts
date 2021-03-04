@@ -24,10 +24,13 @@ export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
+
 interface IMe {
   email: string;
   password: string;
-  id: number;
+  id: string;
   nickname: string;
   Posts: IMainPost[];
   Followings: Array<{ nickname: string }>
@@ -90,6 +93,16 @@ export interface ChangeNickNameFailureAction {
   error: object
 }
 
+export interface AddPostToMeAction {
+  type: typeof ADD_POST_TO_ME;
+  data: string;
+}
+
+export interface RemovePostOfMeAction {
+  type: typeof REMOVE_POST_OF_ME,
+  data: string;
+}
+
 export type UserActionTypes =
   | LoginSuccessAction
   | LoginFailureAction
@@ -102,7 +115,9 @@ export type UserActionTypes =
   | SignUpFailureAction
   | ChangeNickNameRequestAction
   | ChangeNickNameSuccessAction
-  | ChangeNickNameFailureAction;
+  | ChangeNickNameFailureAction
+  | AddPostToMeAction
+  | RemovePostOfMeAction;
 
 interface UserState {
   logInLoading: boolean; // 로그인 시도중
@@ -143,10 +158,18 @@ const initialState: UserState = {
 const dummyUser = (data: { email: string; password: string }) => ({
   ...data,
   nickname: '에반진',
-  id: 1,
-  Posts: [],
-  Followings: [],
-  Followers: [],
+  id: '1',
+  Posts: [{ id: '1' }],
+  Followings: [
+    { nickanme: '부기초' },
+    { nickanme: '피카츄' },
+    { nickanme: '라이츄' },
+  ],
+  Followers: [
+    { nickanme: '부기초' },
+    { nickanme: '피카츄' },
+    { nickanme: '라이츄' },
+  ],
 });
 
 export const loginRequestAction = (data: { email: string; password: string }): UserActionTypes => ({
@@ -237,6 +260,22 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
         ...state,
         changeNicknameLoading: false,
         changeNicknameError: action.error,
+      };
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me?.Posts],
+        },
+      };
+    case REMOVE_POST_OF_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: state.me?.Posts.filter((v) => v.id !== action.data),
+        },
       };
     default:
       return state;

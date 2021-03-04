@@ -17,18 +17,33 @@ export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
 export interface AddPostRequestAction {
-  type: typeof ADD_POST_REQUEST
-  data: string
+  type: typeof ADD_POST_REQUEST;
+  data: { id: string; content: string };
 }
 
 export interface AddPostSuccessAction {
   type: typeof ADD_POST_SUCCESS
-  data: string
+  data: { id: string; content: string; }
 }
 
 export interface AddPostFailureAction {
   type: typeof ADD_POST_FAILURE,
   error: object
+}
+
+export interface RemovePostRequestAction {
+  type: typeof REMOVE_POST_REQUEST;
+  data: string
+}
+
+export interface RemovePostSuccessAction {
+  type: typeof REMOVE_POST_SUCCESS;
+  data: string;
+}
+
+export interface RemovePostFailureAction {
+  type: typeof REMOVE_POST_FAILURE;
+  error: object;
 }
 
 export interface AddCommentRequestAction {
@@ -38,7 +53,7 @@ export interface AddCommentRequestAction {
 
 export interface AddCommentSuccessAction {
   type: typeof ADD_COMMENT_SUCCESS;
-  data: { content: string; postId: number; userId: number };
+  data: { content: string; postId: string; userId: number };
 }
 
 export interface AddCommentFailureAction {
@@ -52,17 +67,24 @@ type PostActionTypes =
   | AddPostFailureAction
   | AddCommentRequestAction
   | AddCommentSuccessAction
-  | AddCommentFailureAction;
+  | AddCommentFailureAction
+  | RemovePostRequestAction
+  | RemovePostSuccessAction
+  | RemovePostFailureAction;
 
 export interface IMainPost {
-  id: number;
+  id: string;
   User: {
-    id: number;
+    id: string;
     nickname: string;
   };
   content: string;
-  Images: Array<{ src: string }>;
-  Comments: Array<{ User: { nickname: string }; content: string }>;
+  Images: Array<{ id: string; src: string }>;
+  Comments: Array<{
+    id: string;
+    User: { id: string; nickname: string };
+    content: string;
+  }>;
 }
 
 interface PostState {
@@ -71,34 +93,41 @@ interface PostState {
   addPostLoading: boolean;
   addPostDone: boolean;
   addPostError: object | null;
-  addCommentLoading: boolean,
-  addCommentDone: boolean,
-  addCommentError: object | null,
+  removePostLoading: boolean;
+  removePostDone: boolean;
+  removePostError: object | null;
+  addCommentLoading: boolean;
+  addCommentDone: boolean;
+  addCommentError: object | null;
 }
 
 const initialState: PostState = {
   mainPosts: [
     {
-      id: 1,
+      id: '1',
       User: {
-        id: 1,
+        id: '1',
         nickname: 'evanjin',
       },
       content: '첫 번째 게시글 #게시글 #익스프레스',
       Images: [
-        { src: 'https://thebook.io/img/covers/cover_080229.jpg' },
-        { src: 'https://thebook.io/img/covers/cover_006934.jpg' },
-        { src: 'https://thebook.io/img/covers/cover_080203.jpg' },
+        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_080229.jpg' },
+        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_006934.jpg' },
+        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_080203.jpg' },
       ],
       Comments: [
         {
+          id: nanoid(),
           User: {
+            id: nanoid(),
             nickname: 'nero',
           },
           content: '우와 개정판이 나왔어요.',
         },
         {
+          id: nanoid(),
           User: {
+            id: nanoid(),
             nickname: 'hero',
           },
           content: '얼른 사고싶어요.',
@@ -110,6 +139,9 @@ const initialState: PostState = {
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
+  removePostLoading: false,
+  removePostDone: false,
+  removePostError: null,
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
@@ -127,11 +159,11 @@ export const addCommentRequestAction = (data: {
   data,
 });
 
-const dummyPost = (data: string) => ({
-  id: nanoid(),
-  content: data,
+const dummyPost = (data: { id: string; content: string; }) => ({
+  id: data.id,
+  content: data.content,
   User: {
-    id: 1,
+    id: '1',
     nickname: '제로초',
   },
   Images: [],
@@ -142,7 +174,7 @@ const dummyComment = (data: string) => ({
   id: nanoid(),
   content: data,
   User: {
-    id: 1,
+    id: '1',
     nickname: '제로초',
   },
 });
@@ -169,6 +201,26 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
         addPostLoading: false,
         addPostError: action.error,
       };
+    case REMOVE_POST_REQUEST:
+      return {
+        ...state,
+        removePostLoading: true,
+        removePostDone: false,
+        removePostError: null,
+      };
+    case REMOVE_POST_SUCCESS:
+      return {
+        ...state,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        removePostLoading: false,
+        removePostDone: true,
+      };
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        removePostLoading: false,
+        removePostError: action.error,
+      };
     case ADD_COMMENT_REQUEST:
       return {
         ...state,
@@ -177,7 +229,9 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
         addCommentError: null,
       };
     case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const postIndex = state.mainPosts.findIndex(
+        (v) => v.id === action.data.postId,
+      );
       const post = { ...state.mainPosts[postIndex] };
       post.Comments = [dummyComment(action.data.content), ...post.Comments];
       const mainPosts = [...state.mainPosts];
