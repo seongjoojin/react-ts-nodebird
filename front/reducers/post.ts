@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import produce from 'immer';
+import faker from 'faker';
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -179,6 +180,33 @@ const dummyComment = (data: string) => ({
     nickname: '제로초',
   },
 });
+
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20).fill().map(() => ({
+    id: nanoid(),
+    User: {
+      id: nanoid(),
+      nickname: faker.name.findName(),
+    },
+    content: faker.lorem.paragraph(),
+    Images: [
+      {
+        id: nanoid(),
+        src: faker.image.image(),
+      },
+    ],
+    Comments: [
+      {
+        id: nanoid(),
+        User: {
+          id: nanoid(),
+          nickname: faker.name.findName(),
+        },
+        content: faker.lorem.sentences(),
+      },
+    ],
+  })),
+);
 
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
