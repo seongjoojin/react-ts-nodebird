@@ -34,8 +34,8 @@ interface IMe {
   id: string;
   nickname: string;
   Posts: IMainPost[];
-  Followings: Array<{ nickname: string }>
-  Followers: Array<{ nickname: string }>
+  Followings: Array<{ id: string; nickname: string }>;
+  Followers: Array<{ id: string; nickname: string }>;
 }
 
 export interface LoginRequestAction {
@@ -45,7 +45,6 @@ export interface LoginRequestAction {
 
 export interface LoginSuccessAction {
   type: typeof LOG_IN_SUCCESS
-  data: { email: string; password: string }
 }
 
 export interface LoginFailureAction {
@@ -73,7 +72,6 @@ export interface SignUpRequestAction {
 
 export interface SignUpSuccessAction {
   type: typeof SIGN_UP_SUCCESS
-  data: { email: string; password: string; nickname: string; }
 }
 
 export interface SignUpFailureAction {
@@ -92,6 +90,36 @@ export interface ChangeNickNameSuccessAction {
 export interface ChangeNickNameFailureAction {
   type: typeof CHANGE_NICKNAME_FAILURE
   error: object
+}
+
+export interface FollowRequestAction {
+  type: typeof FOLLOW_REQUEST;
+  data: string;
+}
+
+export interface FollowSuccessAction {
+  type: typeof FOLLOW_SUCCESS;
+  data: string;
+}
+
+export interface FollowFailureAction {
+  type: typeof FOLLOW_FAILURE;
+  error: object;
+}
+
+export interface UnFollowRequestAction {
+  type: typeof UNFOLLOW_REQUEST;
+  data: string;
+}
+
+export interface UnFollowSuccessAction {
+  type: typeof UNFOLLOW_SUCCESS;
+  data: string;
+}
+
+export interface UnFollowFailureAction {
+  type: typeof UNFOLLOW_FAILURE;
+  error: object;
 }
 
 export interface AddPostToMeAction {
@@ -117,6 +145,12 @@ export type UserActionTypes =
   | ChangeNickNameRequestAction
   | ChangeNickNameSuccessAction
   | ChangeNickNameFailureAction
+  | FollowRequestAction
+  | FollowSuccessAction
+  | FollowFailureAction
+  | UnFollowRequestAction
+  | UnFollowSuccessAction
+  | UnFollowFailureAction
   | AddPostToMeAction
   | RemovePostOfMeAction;
 
@@ -133,6 +167,12 @@ interface UserState {
   changeNicknameLoading: boolean; // 닉네임 변경 시도중
   changeNicknameDone: boolean;
   changeNicknameError: object | null;
+  followLoading: boolean; // 팔로우 시도중
+  followDone: boolean;
+  followError: object | null;
+  unfollowLoading: boolean; // 언팔로우 시도중
+  unfollowDone: boolean;
+  unfollowError: object | null;
   me: IMe | null;
   signUpData: object;
   loginData: object;
@@ -151,6 +191,12 @@ const initialState: UserState = {
   changeNicknameLoading: false,
   changeNicknameDone: false,
   changeNicknameError: null,
+  followLoading: false, // 팔로우 시도중
+  followDone: false,
+  followError: null,
+  unfollowLoading: false, // 언팔로우 시도중
+  unfollowDone: false,
+  unfollowError: null,
   me: null,
   signUpData: {},
   loginData: {},
@@ -185,6 +231,34 @@ export const logoutRequestAction = (): UserActionTypes => ({
 // eslint-disable-next-line max-len
 const reducer = (state: UserState = initialState, action: UserActionTypes): UserState => produce(state, (draft) => {
   switch (action.type) {
+    case FOLLOW_REQUEST:
+      draft.followLoading = true;
+      draft.followError = null;
+      draft.followDone = false;
+      break;
+    case FOLLOW_SUCCESS:
+      draft.followLoading = false;
+      draft.followDone = true;
+      draft.me?.Followings.push({ id: action.data });
+      break;
+    case FOLLOW_FAILURE:
+      draft.followLoading = false;
+      draft.followError = action.error;
+      break;
+    case UNFOLLOW_REQUEST:
+      draft.unfollowLoading = true;
+      draft.unfollowError = null;
+      draft.unfollowDone = false;
+      break;
+    case UNFOLLOW_SUCCESS:
+      draft.unfollowLoading = false;
+      draft.unfollowDone = true;
+      draft.me.Followings = draft.me?.Followings.filter((v) => v.id !== action.data);
+      break;
+    case UNFOLLOW_FAILURE:
+      draft.unfollowLoading = false;
+      draft.unfollowError = action.error;
+      break;
     case LOG_IN_REQUEST:
       draft.logInLoading = true;
       draft.logInError = null;
