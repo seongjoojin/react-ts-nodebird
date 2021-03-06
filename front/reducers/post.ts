@@ -18,6 +18,20 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
+export interface LoadPostRequestAction {
+  type: typeof LOAD_POSTS_REQUEST;
+}
+
+export interface LoadPostSuccessAction {
+  type: typeof LOAD_POSTS_SUCCESS;
+  data: IMainPost[];
+}
+
+export interface LoadPostFailureAction {
+  type: typeof LOAD_POSTS_FAILURE;
+  error: object;
+}
+
 export interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST;
   data: { id: string; content: string };
@@ -64,6 +78,9 @@ export interface AddCommentFailureAction {
 }
 
 type PostActionTypes =
+  | LoadPostRequestAction
+  | LoadPostSuccessAction
+  | LoadPostFailureAction
   | AddPostRequestAction
   | AddPostSuccessAction
   | AddPostFailureAction
@@ -92,9 +109,13 @@ export interface IMainPost {
 interface PostState {
   mainPosts: IMainPost[];
   imagePaths: string[];
+  hasMorePosts: boolean;
   addPostLoading: boolean;
   addPostDone: boolean;
   addPostError: object | null;
+  loadPostsLoading: boolean;
+  loadPostsDone: boolean;
+  loadPostsError: object | null;
   removePostLoading: boolean;
   removePostDone: boolean;
   removePostError: object | null;
@@ -104,43 +125,15 @@ interface PostState {
 }
 
 const initialState: PostState = {
-  mainPosts: [
-    {
-      id: '1',
-      User: {
-        id: '1',
-        nickname: 'evanjin',
-      },
-      content: '첫 번째 게시글 #게시글 #익스프레스',
-      Images: [
-        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_080229.jpg' },
-        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_006934.jpg' },
-        { id: nanoid(), src: 'https://thebook.io/img/covers/cover_080203.jpg' },
-      ],
-      Comments: [
-        {
-          id: nanoid(),
-          User: {
-            id: nanoid(),
-            nickname: 'nero',
-          },
-          content: '우와 개정판이 나왔어요.',
-        },
-        {
-          id: nanoid(),
-          User: {
-            id: nanoid(),
-            nickname: 'hero',
-          },
-          content: '얼른 사고싶어요.',
-        },
-      ],
-    },
-  ],
+  mainPosts: [],
   imagePaths: [],
+  hasMorePosts: true,
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
+  loadPostsLoading: false,
+  loadPostsDone: false,
+  loadPostsError: null,
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
@@ -181,8 +174,9 @@ const dummyComment = (data: string) => ({
   },
 });
 
-initialState.mainPosts = initialState.mainPosts.concat(
-  Array(20).fill().map(() => ({
+export const generateDummyPost = (number: number) => Array(number)
+  .fill('')
+  .map(() => ({
     id: nanoid(),
     User: {
       id: nanoid(),
@@ -205,12 +199,26 @@ initialState.mainPosts = initialState.mainPosts.concat(
         content: faker.lorem.sentences(),
       },
     ],
-  })),
-);
+  }));
 
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
+    case LOAD_POSTS_REQUEST:
+      draft.loadPostsLoading = true;
+      draft.loadPostsDone = false;
+      draft.loadPostsError = null;
+      break;
+    case LOAD_POSTS_SUCCESS:
+      draft.mainPosts = action.data.concat(draft.mainPosts);
+      draft.loadPostsLoading = false;
+      draft.loadPostsDone = true;
+      draft.hasMorePosts = draft.mainPosts.length < 50;
+      break;
+    case LOAD_POSTS_FAILURE:
+      draft.loadPostsLoading = false;
+      draft.loadPostsError = action.error;
+      break;
     case ADD_POST_REQUEST:
       draft.addPostLoading = true;
       draft.addPostDone = false;

@@ -9,6 +9,11 @@ import {
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
+  generateDummyPost,
+  LoadPostRequestAction,
+  LOAD_POSTS_FAILURE,
+  LOAD_POSTS_REQUEST,
+  LOAD_POSTS_SUCCESS,
   RemovePostRequestAction,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
@@ -44,6 +49,27 @@ function* addPost(action: AddPostRequestAction) {
 
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
+}
+
+function loadPostsAPI() { }
+
+function* loadPosts(action: LoadPostRequestAction) {
+  try {
+    yield delay(2000);
+    yield put({
+      type: LOAD_POSTS_SUCCESS,
+      data: generateDummyPost(10),
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* watchLoadPosts() {
+  yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
 
 function removePostAPI() { }
@@ -94,5 +120,10 @@ function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchRemovePost), fork(watchAddComment)]);
+  yield all([
+    fork(watchAddPost),
+    fork(watchLoadPosts),
+    fork(watchRemovePost),
+    fork(watchAddComment),
+  ]);
 }
