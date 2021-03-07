@@ -3,12 +3,15 @@
         "module": "commonjs",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "target": "es6",
+        "target": "ES2020",
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
         "baseUrl": ".",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "resolveJsonModule": true
     },
     "include": ["**/*"]
 }

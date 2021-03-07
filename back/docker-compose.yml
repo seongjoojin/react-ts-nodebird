@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  node-bird-backend:
+    links:
+      - db:nodebird_db_mysql
+    depends_on:
+      - db
+    restart: always
+    build: .
+    ports:
+      - '3065:3065'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  db:
+    image: mysql:8
+    platform: linux/amd64
+    container_name: nodebird_db_mysql
+    volumes:
+      - nodebird_db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: react-nodebird
+    ports:
+      - '3306:3306'
+volumes:
+  nodebird_db_data:
