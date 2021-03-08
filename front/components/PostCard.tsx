@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { IMainPost, REMOVE_POST_REQUEST } from 'reducers/post';
 import { Card, Popover, Button, Avatar, List, Comment } from 'antd';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
+import { IMainPost, REMOVE_POST_REQUEST } from '../reducers/post';
 import { RootState } from '../reducers';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';

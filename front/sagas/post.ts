@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from 'reducers/user';
 import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import {
   AddCommentRequestAction,
   AddPostRequestAction,

@@ -12,4 +12,4 @@ RUN npm cache clean --force
 COPY . .
 
 EXPOSE 3065
-CMD [ "npm", "run","start" ]
+CMD [ "npm", "run", "dev" ]
