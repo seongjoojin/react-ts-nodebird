@@ -214,23 +214,6 @@ const initialState: UserState = {
   loginData: {},
 };
 
-const dummyUser = (data: { email: string; password: string }) => ({
-  ...data,
-  nickname: '에반진',
-  id: '1',
-  Posts: [{ id: '1' }],
-  Followings: [
-    { nickanme: '부기초' },
-    { nickanme: '피카츄' },
-    { nickanme: '라이츄' },
-  ],
-  Followers: [
-    { nickanme: '부기초' },
-    { nickanme: '피카츄' },
-    { nickanme: '라이츄' },
-  ],
-});
-
 export const loginRequestAction = (data: { email: string; password: string }): UserActionTypes => ({
   type: LOG_IN_REQUEST,
   data,
@@ -279,7 +262,7 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
     case LOG_IN_SUCCESS:
       draft.logInLoading = false;
       draft.logInDone = true;
-      draft.me = dummyUser(action.data);
+      draft.me = action.data;
       break;
     case LOG_IN_FAILURE:
       draft.logInLoading = false;
