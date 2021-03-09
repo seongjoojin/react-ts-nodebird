@@ -1,10 +1,11 @@
-import React, { ChangeEvent, useCallback, useState } from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Button, Checkbox, Form, Input, message } from 'antd';
 import Head from 'next/head';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
+import { useRouter } from 'next/router';
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
 import { SIGN_UP_REQUEST } from '../reducers/user';
@@ -19,8 +20,9 @@ const SubmitButton = styled(Button)`
 `;
 
 const Signup = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state: RootState) => state.user);
+  const { signUpLoading, signUpDone, signUpError } = useSelector((state: RootState) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -51,6 +53,18 @@ const Signup = () => {
       data: { email, password, nickname },
     });
   }, [email, password, passwordCheck, term]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      router.push('/');
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      message.error(signUpError);
+    }
+  }, [signUpError]);
 
   return (
     <>
