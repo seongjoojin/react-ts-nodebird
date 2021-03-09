@@ -21,17 +21,19 @@ import {
   FollowRequestAction,
   UnFollowRequestAction,
   SignUpRequestAction,
+  IMe,
 } from '../reducers/user';
 
-function loginAPI() {}
+function loginAPI(data: { email: string; password: string }) {
+  return axios.post('/user/login', data);
+}
 
 function* login(action: LoginRequestAction) {
   try {
-    // yield call(loginAPI);
-    yield delay(1000);
+    const result: AxiosResponse<IMe> = yield call(loginAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -71,7 +73,7 @@ function signUpAPI(data: {
   password: string;
   nickname: string;
 }) {
-  return axios.post('http://localhost:3065/user', data);
+  return axios.post('/user', data);
 }
 
 function* signUp(action: SignUpRequestAction) {

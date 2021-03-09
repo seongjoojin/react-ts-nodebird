@@ -28,14 +28,15 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
-interface IMe {
+export interface IMe {
   email: string;
-  password: string;
-  id: string;
+  id: number;
   nickname: string;
   Posts: IMainPost[];
   Followings: Array<{ id: string; nickname: string }>;
   Followers: Array<{ id: string; nickname: string }>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LoginRequestAction {
@@ -44,7 +45,17 @@ export interface LoginRequestAction {
 }
 
 export interface LoginSuccessAction {
-  type: typeof LOG_IN_SUCCESS
+  type: typeof LOG_IN_SUCCESS;
+  data: {
+    Followers: [];
+    Followings: [];
+    Posts: [];
+    createdAt: '2021-03-09T12:56:41.000Z';
+    email: '123@123.123';
+    id: 1;
+    nickname: '123';
+    updatedAt: '2021-03-09T12:56:41.000Z';
+  };
 }
 
 export interface LoginFailureAction {
@@ -57,7 +68,8 @@ export interface LogoutRequestAction {
 }
 
 export interface LogoutSuccessAction {
-  type: typeof LOG_OUT_SUCCESS
+  type: typeof LOG_OUT_SUCCESS;
+  data: IMe;
 }
 
 export interface LogoutFailureAction {
