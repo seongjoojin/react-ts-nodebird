@@ -22,7 +22,7 @@ const SubmitButton = styled(Button)`
 const Signup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError } = useSelector((state: RootState) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state: RootState) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -55,8 +55,14 @@ const Signup = () => {
   }, [email, password, passwordCheck, term]);
 
   useEffect(() => {
+    if (me && me.id) {
+      router.replace('/');
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
     if (signUpDone) {
-      router.push('/');
+      router.replace('/');
     }
   }, [signUpDone]);
 

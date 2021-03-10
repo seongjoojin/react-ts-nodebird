@@ -5,10 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../reducers';
 import { logoutRequestAction } from '../reducers/user';
 
-interface IProps {
-}
-
-const UserProfile = ({ }: IProps) => {
+const UserProfile = () => {
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state: RootState) => state.user);
   const onLogout = useCallback(() => {

@@ -60,7 +60,7 @@ export interface LoginSuccessAction {
 
 export interface LoginFailureAction {
   type: typeof LOG_IN_FAILURE
-  error: object
+  error: string
 }
 
 export interface LogoutRequestAction {
@@ -74,7 +74,7 @@ export interface LogoutSuccessAction {
 
 export interface LogoutFailureAction {
   type: typeof LOG_OUT_FAILURE
-  error: object
+  error: string
 }
 
 export interface SignUpRequestAction {
@@ -88,7 +88,7 @@ export interface SignUpSuccessAction {
 
 export interface SignUpFailureAction {
   type: typeof SIGN_UP_FAILURE
-  error: object
+  error: string
 }
 
 export interface ChangeNickNameRequestAction {
@@ -101,7 +101,7 @@ export interface ChangeNickNameSuccessAction {
 
 export interface ChangeNickNameFailureAction {
   type: typeof CHANGE_NICKNAME_FAILURE
-  error: object
+  error: string
 }
 
 export interface FollowRequestAction {
@@ -116,7 +116,7 @@ export interface FollowSuccessAction {
 
 export interface FollowFailureAction {
   type: typeof FOLLOW_FAILURE;
-  error: object;
+  error: string;
 }
 
 export interface UnFollowRequestAction {
@@ -131,7 +131,7 @@ export interface UnFollowSuccessAction {
 
 export interface UnFollowFailureAction {
   type: typeof UNFOLLOW_FAILURE;
-  error: object;
+  error: string;
 }
 
 export interface AddPostToMeAction {
@@ -169,25 +169,23 @@ export type UserActionTypes =
 interface UserState {
   logInLoading: boolean; // 로그인 시도중
   logInDone: boolean;
-  logInError: object | null;
+  logInError: string | null;
   logOutLoading: boolean; // 로그아웃 시도중
   logOutDone: boolean;
-  logOutError: object | null;
+  logOutError: string | null;
   signUpLoading: boolean; // 회원가입 시도중
   signUpDone: boolean;
-  signUpError: object | null;
+  signUpError: string | null;
   changeNicknameLoading: boolean; // 닉네임 변경 시도중
   changeNicknameDone: boolean;
-  changeNicknameError: object | null;
+  changeNicknameError: string | null;
   followLoading: boolean; // 팔로우 시도중
   followDone: boolean;
-  followError: object | null;
+  followError: string | null;
   unfollowLoading: boolean; // 언팔로우 시도중
   unfollowDone: boolean;
-  unfollowError: object | null;
+  unfollowError: string | null;
   me: IMe | null;
-  signUpData: object;
-  loginData: object;
 }
 
 const initialState: UserState = {
@@ -210,8 +208,6 @@ const initialState: UserState = {
   unfollowDone: false,
   unfollowError: null,
   me: null,
-  signUpData: {},
-  loginData: {},
 };
 
 export const loginRequestAction = (data: { email: string; password: string }): UserActionTypes => ({

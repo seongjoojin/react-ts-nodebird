@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Button, Form } from 'antd';
+import React, {useCallback, useEffect} from 'react';
+import {Button, Form, message} from 'antd';
 import Link from 'next/link';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,12 +15,10 @@ const ButtonWrapper = styled.div`
 const LoginWrapper = styled(Form)`
   padding: 10px;
 `;
-interface IProps {
-}
 
-const LoginForm = ({ }: IProps) => {
+const LoginForm = () => {
   const dispatch = useDispatch();
-  const { logInLoading } = useSelector((state: RootState) => state.user);
+  const { logInLoading, logInError } = useSelector((state: RootState) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
 
@@ -28,6 +26,12 @@ const LoginForm = ({ }: IProps) => {
     console.log(email, password);
     dispatch(loginRequestAction({ email, password }));
   }, [email, password]);
+
+  useEffect(() => {
+    if (logInError) {
+      message.error(logInError);
+    }
+  }, [logInError]);
 
   return (
     <LoginWrapper onFinish={onSubmitForm}>

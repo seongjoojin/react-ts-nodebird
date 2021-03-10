@@ -47,12 +47,13 @@ function* watchLogin() {
   yield takeLatest(LOG_IN_REQUEST, login);
 }
 
-function logOutAPI() {}
+function logOutAPI() {
+  return axios.post('/user/logout');
+}
 
 function* logout() {
   try {
-    // const result = yield call(logOutAPI);
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });
