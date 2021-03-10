@@ -29,7 +29,7 @@ export interface LoadPostSuccessAction {
 
 export interface LoadPostFailureAction {
   type: typeof LOAD_POSTS_FAILURE;
-  error: object;
+  error: string;
 }
 
 export interface AddPostRequestAction {
@@ -39,12 +39,12 @@ export interface AddPostRequestAction {
 
 export interface AddPostSuccessAction {
   type: typeof ADD_POST_SUCCESS
-  data: { id: string; content: string; }
+  data: IMainPost
 }
 
 export interface AddPostFailureAction {
   type: typeof ADD_POST_FAILURE,
-  error: object
+  error: string
 }
 
 export interface RemovePostRequestAction {
@@ -59,7 +59,7 @@ export interface RemovePostSuccessAction {
 
 export interface RemovePostFailureAction {
   type: typeof REMOVE_POST_FAILURE;
-  error: object;
+  error: string;
 }
 
 export interface AddCommentRequestAction {
@@ -69,12 +69,12 @@ export interface AddCommentRequestAction {
 
 export interface AddCommentSuccessAction {
   type: typeof ADD_COMMENT_SUCCESS;
-  data: { content: string; postId: string; userId: number };
+  data: { PostId: string, User: { id: string, nickname: string }, content: string };
 }
 
 export interface AddCommentFailureAction {
   type: typeof ADD_COMMENT_FAILURE,
-  error: object
+  error: string
 }
 
 type PostActionTypes =
@@ -112,16 +112,16 @@ interface PostState {
   hasMorePosts: boolean;
   addPostLoading: boolean;
   addPostDone: boolean;
-  addPostError: object | null;
+  addPostError: string | null;
   loadPostsLoading: boolean;
   loadPostsDone: boolean;
-  loadPostsError: object | null;
+  loadPostsError: string | null;
   removePostLoading: boolean;
   removePostDone: boolean;
-  removePostError: object | null;
+  removePostError: string | null;
   addCommentLoading: boolean;
   addCommentDone: boolean;
-  addCommentError: object | null;
+  addCommentError: string | null;
 }
 
 const initialState: PostState = {
@@ -152,26 +152,6 @@ export const addCommentRequestAction = (data: {
 }) => ({
   type: ADD_COMMENT_REQUEST,
   data,
-});
-
-const dummyPost = (data: { id: string; content: string; }) => ({
-  id: data.id,
-  content: data.content,
-  User: {
-    id: '1',
-    nickname: '제로초',
-  },
-  Images: [],
-  Comments: [],
-});
-
-const dummyComment = (data: string) => ({
-  id: nanoid(),
-  content: data,
-  User: {
-    id: '1',
-    nickname: '제로초',
-  },
 });
 
 export const generateDummyPost = (number: number) => Array(number)
@@ -225,7 +205,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.addPostError = null;
       break;
     case ADD_POST_SUCCESS:
-      draft.mainPosts.unshift(dummyPost(action.data));
+      draft.mainPosts.unshift(action.data);
       draft.addPostLoading = false;
       draft.addPostDone = true;
       break;
@@ -254,8 +234,8 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       break;
     case ADD_COMMENT_SUCCESS:
       draft.mainPosts
-        .find((v) => v.id === action.data.postId)
-        ?.Comments.unshift(dummyComment(action.data.content));
+        .find((v) => v.id === action.data.PostId)
+        ?.Comments.unshift(action.data);
       draft.addCommentLoading = false;
       draft.addCommentDone = true;
       break;

@@ -1,5 +1,6 @@
+import axios, { AxiosResponse } from 'axios';
 import { nanoid } from 'nanoid';
-import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import {
   AddCommentRequestAction,
@@ -20,14 +21,13 @@ import {
   REMOVE_POST_SUCCESS,
 } from '../reducers/post';
 
-function addPostAPI() {
-
+function addPostAPI(data: { id: string; content: string }) {
+  return axios.post('/post', data);
 }
 
 function* addPost(action: AddPostRequestAction) {
   try {
-    const id = nanoid();
-    yield delay(2000);
+    const result: AxiosResponse<any> = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
       data: {
@@ -97,13 +97,13 @@ function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePost);
 }
 
-function addCommentAPI() {
-
+function addCommentAPI(data: { content: string, postId: number, userId: number }) {
+  return axios.post(`/post/${data.postId}/comment`, data);
 }
 
 function* addComment(action: AddCommentRequestAction) {
   try {
-    yield delay(2000);
+    const result : AxiosResponse<any> = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: action.data,
