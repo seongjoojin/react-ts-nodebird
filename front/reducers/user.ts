@@ -1,6 +1,14 @@
 import produce from 'immer';
 import { IMainPost } from './post';
 
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
+
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -33,8 +41,19 @@ export interface IMe {
   id: number;
   nickname: string;
   Posts: IMainPost[];
-  Followings: Array<{ id: string; nickname: string }>;
-  Followers: Array<{ id: string; nickname: string }>;
+  Followings: Array<{ id: number; nickname: string }>;
+  Followers: Array<{ id: number; nickname: string }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoadMyInfoSuccessData {
+  email: string;
+  id: number;
+  nickname: string;
+  Posts: Array<{ id: number; }>;
+  Followings: Array<{ id: number; }>;
+  Followers: Array<{ id: number; }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -134,6 +153,20 @@ export interface UnFollowFailureAction {
   error: string;
 }
 
+export interface LoadMyInfoRequestAction {
+  type: typeof LOAD_MY_INFO_REQUEST;
+}
+
+export interface LoadMyInfoSuccessAction {
+  type: typeof LOAD_MY_INFO_SUCCESS;
+  data: LoadMyInfoSuccessData | null;
+}
+
+export interface LoadMyInfoFailureAction {
+  type: typeof LOAD_MY_INFO_FAILURE;
+  error: string;
+}
+
 export interface AddPostToMeAction {
   type: typeof ADD_POST_TO_ME;
   data: string;
@@ -164,9 +197,15 @@ export type UserActionTypes =
   | UnFollowSuccessAction
   | UnFollowFailureAction
   | AddPostToMeAction
-  | RemovePostOfMeAction;
+  | RemovePostOfMeAction
+  | LoadMyInfoRequestAction
+  | LoadMyInfoSuccessAction
+  | LoadMyInfoFailureAction;
 
 interface UserState {
+  loadMyInfoLoading: boolean; // 유저 정보 가져오기 시도중
+  loadMyInfoDone: boolean;
+  loadMyInfoError: string | null;
   logInLoading: boolean; // 로그인 시도중
   logInDone: boolean;
   logInError: string | null;
@@ -189,6 +228,9 @@ interface UserState {
 }
 
 const initialState: UserState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
   logInLoading: false,
   logInDone: false,
   logInError: null,
@@ -222,6 +264,20 @@ export const logoutRequestAction = (): UserActionTypes => ({
 // eslint-disable-next-line max-len
 const reducer = (state: UserState = initialState, action: UserActionTypes): UserState => produce(state, (draft) => {
   switch (action.type) {
+    case LOAD_MY_INFO_REQUEST:
+      draft.loadMyInfoLoading = true;
+      draft.loadMyInfoError = null;
+      draft.loadMyInfoDone = false;
+      break;
+    case LOAD_MY_INFO_SUCCESS:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoDone = true;
+      draft.me = action.data;
+      break;
+    case LOAD_MY_INFO_FAILURE:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoError = action.error;
+      break;
     case FOLLOW_REQUEST:
       draft.followLoading = true;
       draft.followError = null;
