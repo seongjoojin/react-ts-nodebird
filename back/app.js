@@ -25,7 +25,7 @@ passportConfig();
 app.use(morgan('dev'));
 app.use(cors({
   origin: 'http://localhost:3060',
-  credentials: false,
+  credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

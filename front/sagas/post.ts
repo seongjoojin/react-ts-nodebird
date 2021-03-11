@@ -18,26 +18,23 @@ import {
   RemovePostRequestAction,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
-  REMOVE_POST_SUCCESS,
+  REMOVE_POST_SUCCESS, IMainPost,
 } from '../reducers/post';
 
-function addPostAPI(data: { id: string; content: string }) {
-  return axios.post('/post', data);
+function addPostAPI(data: string) {
+  return axios.post('/post', { content: data });
 }
 
 function* addPost(action: AddPostRequestAction) {
   try {
-    const result: AxiosResponse<any> = yield call(addPostAPI, action.data);
+    const result: AxiosResponse<IMainPost> = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: {
-        id,
-        content: action.data,
-      },
+      data: result.data,
     });
     yield put({
       type: ADD_POST_TO_ME,
-      data: id,
+      data: result.data.id,
     });
   } catch (err) {
     yield put({
@@ -51,7 +48,7 @@ function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
 
-function loadPostsAPI() { }
+function loadPostsAPI() {}
 
 function* loadPosts(action: LoadPostRequestAction) {
   try {
@@ -72,7 +69,9 @@ function* watchLoadPosts() {
   yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
 
-function removePostAPI() { }
+function removePostAPI(data) {
+  return axios.delete('/post', { withCredentials: true });
+}
 
 function* removePost(action: RemovePostRequestAction) {
   try {
@@ -98,7 +97,7 @@ function* watchRemovePost() {
 }
 
 function addCommentAPI(data: { content: string, postId: number, userId: number }) {
-  return axios.post(`/post/${data.postId}/comment`, data);
+  return axios.post(`/post/${data.postId}/comment`, data, { withCredentials: true });
 }
 
 function* addComment(action: AddCommentRequestAction) {
@@ -106,7 +105,7 @@ function* addComment(action: AddCommentRequestAction) {
     const result : AxiosResponse<any> = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({

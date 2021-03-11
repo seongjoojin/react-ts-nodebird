@@ -34,7 +34,7 @@ export interface LoadPostFailureAction {
 
 export interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST;
-  data: { id: string; content: string };
+  data: string ;
 }
 
 export interface AddPostSuccessAction {
@@ -92,9 +92,9 @@ type PostActionTypes =
   | RemovePostFailureAction;
 
 export interface IMainPost {
-  id: string;
+  id: number;
   User: {
-    id: string;
+    id: number;
     nickname: string;
   };
   content: string;
@@ -104,6 +104,9 @@ export interface IMainPost {
     User: { id: string; nickname: string };
     content: string;
   }>;
+  RetweetId: number | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PostState {
