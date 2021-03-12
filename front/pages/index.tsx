@@ -26,8 +26,10 @@ const Home = () => {
     handleIntersect([{ isIntersecting }]) {
       if (isIntersecting) {
         if (hasMorePosts && !loadPostsLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
           dispatch({
             type: LOAD_POSTS_REQUEST,
+            lastId,
           });
         }
       }

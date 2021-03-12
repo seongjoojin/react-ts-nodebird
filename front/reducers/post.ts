@@ -1,6 +1,4 @@
-import { nanoid } from 'nanoid';
 import produce from 'immer';
-import faker from 'faker';
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -20,6 +18,7 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
 export interface LoadPostRequestAction {
   type: typeof LOAD_POSTS_REQUEST;
+  lastId: number;
 }
 
 export interface LoadPostSuccessAction {
@@ -54,7 +53,7 @@ export interface RemovePostRequestAction {
 
 export interface RemovePostSuccessAction {
   type: typeof REMOVE_POST_SUCCESS;
-  data: string;
+  data: number;
 }
 
 export interface RemovePostFailureAction {
@@ -69,7 +68,7 @@ export interface AddCommentRequestAction {
 
 export interface AddCommentSuccessAction {
   type: typeof ADD_COMMENT_SUCCESS;
-  data: { PostId: string, User: { id: string, nickname: string }, content: string };
+  data: AddCommentSuccessData
 }
 
 export interface AddCommentFailureAction {
@@ -100,12 +99,22 @@ export interface IMainPost {
   content: string;
   Images: Array<{ id: string; src: string }>;
   Comments: Array<{
-    id: string;
-    User: { id: string; nickname: string };
+    id: number;
+    User: { id: number; nickname: string };
     content: string;
   }>;
   RetweetId: number | null;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface AddCommentSuccessData {
+  PostId: number;
+  User: { id: number, nickname: string };
+  UserId: number
+  content: string;
+  createdAt: string;
+  id: number;
   updatedAt: string;
 }
 
@@ -157,33 +166,6 @@ export const addCommentRequestAction = (data: {
   data,
 });
 
-export const generateDummyPost = (number: number) => Array(number)
-  .fill('')
-  .map(() => ({
-    id: nanoid(),
-    User: {
-      id: nanoid(),
-      nickname: faker.name.findName(),
-    },
-    content: faker.lorem.paragraph(),
-    Images: [
-      {
-        id: nanoid(),
-        src: faker.image.image(),
-      },
-    ],
-    Comments: [
-      {
-        id: nanoid(),
-        User: {
-          id: nanoid(),
-          nickname: faker.name.findName(),
-        },
-        content: faker.lorem.sentences(),
-      },
-    ],
-  }));
-
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
@@ -196,7 +178,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.mainPosts = action.data.concat(draft.mainPosts);
       draft.loadPostsLoading = false;
       draft.loadPostsDone = true;
-      draft.hasMorePosts = draft.mainPosts.length < 50;
+      draft.hasMorePosts = action.data.length === 10;
       break;
     case LOAD_POSTS_FAILURE:
       draft.loadPostsLoading = false;

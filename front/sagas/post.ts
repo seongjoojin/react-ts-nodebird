@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import { nanoid } from 'nanoid';
 import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import {
@@ -10,7 +9,6 @@ import {
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
-  generateDummyPost,
   LoadPostRequestAction,
   LOAD_POSTS_FAILURE,
   LOAD_POSTS_REQUEST,
@@ -18,7 +16,7 @@ import {
   RemovePostRequestAction,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
-  REMOVE_POST_SUCCESS, IMainPost,
+  REMOVE_POST_SUCCESS, IMainPost, AddCommentSuccessData,
 } from '../reducers/post';
 
 function addPostAPI(data: string) {
@@ -48,14 +46,16 @@ function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
 
-function loadPostsAPI() {}
+function loadPostsAPI(lastId: number) {
+  return axios.get(`/posts?lastId=${lastId || 0}`);
+}
 
 function* loadPosts(action: LoadPostRequestAction) {
   try {
-    yield delay(2000);
+    const result: AxiosResponse<IMainPost[]> = yield call(loadPostsAPI, action.lastId);
     yield put({
       type: LOAD_POSTS_SUCCESS,
-      data: generateDummyPost(10),
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -97,12 +97,12 @@ function* watchRemovePost() {
 }
 
 function addCommentAPI(data: { content: string, postId: number, userId: number }) {
-  return axios.post(`/post/${data.postId}/comment`, data, { withCredentials: true });
+  return axios.post(`/post/${data.postId}/comment`, data);
 }
 
 function* addComment(action: AddCommentRequestAction) {
   try {
-    const result : AxiosResponse<any> = yield call(addCommentAPI, action.data);
+    const result : AxiosResponse<AddCommentSuccessData> = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: result.data,
