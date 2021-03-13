@@ -4,7 +4,7 @@ import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, Ellipsis
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
-import { IMainPost, REMOVE_POST_REQUEST } from '../reducers/post';
+import {IMainPost, LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST} from '../reducers/post';
 import { RootState } from '../reducers';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';
@@ -22,11 +22,20 @@ interface IProps {
 const PostCard = ({ post }: IProps) => {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state: RootState) => state.post);
-  const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const id = useSelector((state: RootState) => state.user.me?.id);
-  const onToggleLike = useCallback(() => {
-    setLiked((prevState) => !prevState);
+  const liked = post.Likers.find((v) => v.id === id);
+  const onUnLike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prevState) => !prevState);
@@ -45,8 +54,8 @@ const PostCard = ({ post }: IProps) => {
         actions={[
           <RetweetOutlined key="retweet" />,
           liked
-            ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />
-            : <HeartOutlined key="heart" onClick={onToggleLike} />,
+            ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onUnLike} />
+            : <HeartOutlined key="heart" onClick={onLike} />,
           <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
             key="more"

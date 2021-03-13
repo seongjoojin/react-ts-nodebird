@@ -224,7 +224,7 @@ interface UserState {
   unfollowLoading: boolean; // 언팔로우 시도중
   unfollowDone: boolean;
   unfollowError: string | null;
-  me: IMe | null;
+  me: IMe | LoadMyInfoSuccessData | null;
 }
 
 const initialState: UserState = {
