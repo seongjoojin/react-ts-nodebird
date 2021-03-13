@@ -145,12 +145,12 @@ export interface AddPostFailureAction {
 
 export interface RemovePostRequestAction {
   type: typeof REMOVE_POST_REQUEST;
-  data: string
+  data: number;
 }
 
 export interface RemovePostSuccessAction {
   type: typeof REMOVE_POST_SUCCESS;
-  data: number;
+  data: { PostId:number };
 }
 
 export interface RemovePostFailureAction {
@@ -414,7 +414,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.removePostError = null;
       break;
     case REMOVE_POST_SUCCESS:
-      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data);
+      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
       draft.removePostLoading = false;
       draft.removePostDone = true;
       break;

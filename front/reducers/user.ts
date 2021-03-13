@@ -111,11 +111,13 @@ export interface SignUpFailureAction {
 }
 
 export interface ChangeNickNameRequestAction {
-  type: typeof CHANGE_NICKNAME_REQUEST
+  type: typeof CHANGE_NICKNAME_REQUEST;
+  data: string;
 }
 
 export interface ChangeNickNameSuccessAction {
-  type: typeof CHANGE_NICKNAME_SUCCESS
+  type: typeof CHANGE_NICKNAME_SUCCESS;
+  data: { nickname: string; };
 }
 
 export interface ChangeNickNameFailureAction {
@@ -352,10 +354,14 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
       draft.changeNicknameDone = false;
       draft.changeNicknameError = null;
       break;
-    case CHANGE_NICKNAME_SUCCESS:
+    case CHANGE_NICKNAME_SUCCESS: {
+      if (draft.me) {
+        draft.me.nickname = action.data.nickname;
+      }
       draft.changeNicknameLoading = false;
       draft.changeNicknameDone = true;
       break;
+    }
     case CHANGE_NICKNAME_FAILURE:
       draft.changeNicknameLoading = false;
       draft.changeNicknameError = action.error;

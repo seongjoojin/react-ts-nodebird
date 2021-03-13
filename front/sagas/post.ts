@@ -110,7 +110,8 @@ function unlikePostAPI(data: number) {
 
 function* unlikePost(action: UnLikePostRequestAction) {
   try {
-    const result: AxiosResponse<{ PostId: number, UserId: number }> = yield call(unlikePostAPI, action.data);
+    const result
+    : AxiosResponse<{ PostId: number, UserId: number }> = yield call(unlikePostAPI, action.data);
     yield put({
       type: UNLIKE_POST_SUCCESS,
       data: result.data,
@@ -127,20 +128,20 @@ function* watchUnlikePost() {
   yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
 }
 
-function removePostAPI(data) {
-  return axios.delete('/post', { withCredentials: true });
+function removePostAPI(data: number) {
+  return axios.delete(`/post/${data}`);
 }
 
 function* removePost(action: RemovePostRequestAction) {
   try {
-    yield delay(2000);
+    const result: AxiosResponse<any> = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
