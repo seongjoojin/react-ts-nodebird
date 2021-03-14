@@ -3,7 +3,7 @@ import { Button, Form, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
-import { ADD_COMMENT_REQUEST, IMainPost } from '../reducers/post';
+import { addCommentRequestAction, IMainPost } from '../reducers/post';
 import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
 
@@ -29,10 +29,7 @@ const CommentForm = ({ post }: IProps) => {
   const onSubmitComment = useCallback(() => {
     console.log(id, post.id, commentText);
     if (id) {
-      dispatch({
-        type: ADD_COMMENT_REQUEST,
-        data: { content: commentText, postId: post.id, userId: id },
-      });
+      dispatch(addCommentRequestAction({ content: commentText, postId: post.id, userId: id }));
     }
   }, [commentText, id]);
 

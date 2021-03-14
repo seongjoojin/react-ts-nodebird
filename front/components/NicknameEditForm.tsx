@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Form, Input } from 'antd';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { CHANGE_NICKNAME_REQUEST } from '../reducers/user';
+import { changeNicknameRequestAction } from '../reducers/user';
 import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
 
@@ -18,10 +18,7 @@ const NicknameEditForm = () => {
   const [nickname, onChangeNickname] = useInput(me?.nickname || '');
 
   const onSubmit = useCallback(() => {
-    dispatch({
-      type: CHANGE_NICKNAME_REQUEST,
-      data: nickname,
-    });
+    dispatch(changeNicknameRequestAction(nickname));
   }, [nickname]);
   return (
     <NicknameEditWrapper>

@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  loadFollowersRequestAction,
+  loadFollowingsRequestAction,
+} from '../reducers/user';
 
 import AppLayout from '../components/AppLayout';
 import FollowList from '../components/FollowList';
@@ -9,8 +13,13 @@ import NicknameEditForm from '../components/NicknameEditForm';
 import { RootState } from '../reducers';
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const { me } = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    dispatch(loadFollowersRequestAction());
+    dispatch(loadFollowingsRequestAction());
+  }, []);
   useEffect(() => {
     if (!(me && me.id)) {
       router.push('/');

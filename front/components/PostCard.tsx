@@ -4,7 +4,12 @@ import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, Ellipsis
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
-import {IMainPost, LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST} from '../reducers/post';
+import {
+  IMainPost,
+  likePostRequestAction,
+  removePostRequestAction,
+  unlikePostRequestAction,
+} from '../reducers/post';
 import { RootState } from '../reducers';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';
@@ -26,26 +31,17 @@ const PostCard = ({ post }: IProps) => {
   const id = useSelector((state: RootState) => state.user.me?.id);
   const liked = post.Likers.find((v) => v.id === id);
   const onUnLike = useCallback(() => {
-    dispatch({
-      type: UNLIKE_POST_REQUEST,
-      data: post.id,
-    });
+    dispatch(unlikePostRequestAction(post.id));
   }, []);
   const onLike = useCallback(() => {
-    dispatch({
-      type: LIKE_POST_REQUEST,
-      data: post.id,
-    });
+    dispatch(likePostRequestAction(post.id));
   }, []);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prevState) => !prevState);
   }, []);
 
   const onRemovePost = useCallback(() => {
-    dispatch({
-      type: REMOVE_POST_REQUEST,
-      data: post.id,
-    });
+    dispatch(removePostRequestAction(post.id));
   }, []);
   return (
     <CardWrapper>

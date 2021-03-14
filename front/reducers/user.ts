@@ -33,16 +33,35 @@ export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
+export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
+export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
+export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
+
+export const LOAD_FOLLOWINGS_REQUEST = 'LOAD_FOLLOWINGS_REQUEST';
+export const LOAD_FOLLOWINGS_SUCCESS = 'LOAD_FOLLOWINGS_SUCCESS';
+export const LOAD_FOLLOWINGS_FAILURE = 'LOAD_FOLLOWINGS_FAILURE';
+
+export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
+export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
+export const LOAD_FOLLOWERS_FAILURE = 'LOAD_FOLLOWERS_FAILURE';
+
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
+
+export type FollowType = {
+  createdAt: string;
+  updatedAt: string;
+  FollowingId: string;
+  FollowerId: string;
+};
 
 export interface IMe {
   email: string;
   id: number;
   nickname: string;
   Posts: IMainPost[];
-  Followings: Array<{ id: number; nickname: string }>;
-  Followers: Array<{ id: number; nickname: string }>;
+  Followings: Array<{ id: number; nickname?: string; Follow?: FollowType[]; }>;
+  Followers: Array<{ id: number; nickname?: string; Follow?: FollowType[]; }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -65,25 +84,16 @@ export interface LoginRequestAction {
 
 export interface LoginSuccessAction {
   type: typeof LOG_IN_SUCCESS;
-  data: {
-    Followers: [];
-    Followings: [];
-    Posts: [];
-    createdAt: '2021-03-09T12:56:41.000Z';
-    email: '123@123.123';
-    id: 1;
-    nickname: '123';
-    updatedAt: '2021-03-09T12:56:41.000Z';
-  };
+  data: IMe;
 }
 
 export interface LoginFailureAction {
-  type: typeof LOG_IN_FAILURE
+  type: typeof LOG_IN_FAILURE;
   error: string
 }
 
 export interface LogoutRequestAction {
-  type: typeof LOG_OUT_REQUEST
+  type: typeof LOG_OUT_REQUEST;
 }
 
 export interface LogoutSuccessAction {
@@ -92,22 +102,22 @@ export interface LogoutSuccessAction {
 }
 
 export interface LogoutFailureAction {
-  type: typeof LOG_OUT_FAILURE
-  error: string
+  type: typeof LOG_OUT_FAILURE;
+  error: string;
 }
 
 export interface SignUpRequestAction {
-  type: typeof SIGN_UP_REQUEST
+  type: typeof SIGN_UP_REQUEST;
   data: { email: string; password: string; nickname: string; }
 }
 
 export interface SignUpSuccessAction {
-  type: typeof SIGN_UP_SUCCESS
+  type: typeof SIGN_UP_SUCCESS;
 }
 
 export interface SignUpFailureAction {
-  type: typeof SIGN_UP_FAILURE
-  error: string
+  type: typeof SIGN_UP_FAILURE;
+  error: string;
 }
 
 export interface ChangeNickNameRequestAction {
@@ -127,12 +137,12 @@ export interface ChangeNickNameFailureAction {
 
 export interface FollowRequestAction {
   type: typeof FOLLOW_REQUEST;
-  data: string;
+  data: number;
 }
 
 export interface FollowSuccessAction {
   type: typeof FOLLOW_SUCCESS;
-  data: string;
+  data: { UserId: number };
 }
 
 export interface FollowFailureAction {
@@ -142,12 +152,12 @@ export interface FollowFailureAction {
 
 export interface UnFollowRequestAction {
   type: typeof UNFOLLOW_REQUEST;
-  data: string;
+  data: number;
 }
 
 export interface UnFollowSuccessAction {
   type: typeof UNFOLLOW_SUCCESS;
-  data: string;
+  data: { UserId: number };
 }
 
 export interface UnFollowFailureAction {
@@ -171,12 +181,55 @@ export interface LoadMyInfoFailureAction {
 
 export interface AddPostToMeAction {
   type: typeof ADD_POST_TO_ME;
-  data: string;
+  data: IMainPost;
 }
 
 export interface RemovePostOfMeAction {
   type: typeof REMOVE_POST_OF_ME,
-  data: string;
+  data: number;
+}
+
+export interface RemoveFollowerRequestAction {
+  type: typeof REMOVE_FOLLOWER_REQUEST;
+  data: number;
+}
+
+export interface RemoveFollowerSuccessAction {
+  type: typeof REMOVE_FOLLOWER_SUCCESS
+  data: { UserId: number }
+}
+
+export interface RemoveFollowerFailureAction {
+  type: typeof REMOVE_FOLLOWER_FAILURE;
+  error: string;
+}
+
+export interface LoadFollowingsRequestAction {
+  type: typeof LOAD_FOLLOWINGS_REQUEST
+}
+
+export interface LoadFollowingsSuccessAction {
+  type: typeof LOAD_FOLLOWINGS_SUCCESS;
+  data: { id: number; nickname?: string; Follow?: FollowType[] };
+}
+
+export interface LoadFollowingsFailureAction {
+  type: typeof LOAD_FOLLOWINGS_FAILURE;
+  error: string;
+}
+
+export interface LoadFollowersRequestAction {
+  type: typeof LOAD_FOLLOWERS_REQUEST
+}
+
+export interface LoadFollowersSuccessAction {
+  type: typeof LOAD_FOLLOWERS_SUCCESS;
+  data: { id: number; nickname?: string; Follow?: FollowType[] };
+}
+
+export interface LoadFollowersFailureAction {
+  type: typeof LOAD_FOLLOWERS_FAILURE;
+  error: string;
 }
 
 export type UserActionTypes =
@@ -202,7 +255,16 @@ export type UserActionTypes =
   | RemovePostOfMeAction
   | LoadMyInfoRequestAction
   | LoadMyInfoSuccessAction
-  | LoadMyInfoFailureAction;
+  | LoadMyInfoFailureAction
+  | RemoveFollowerRequestAction
+  | RemoveFollowerSuccessAction
+  | RemoveFollowerFailureAction
+  | LoadFollowingsRequestAction
+  | LoadFollowingsSuccessAction
+  | LoadFollowingsFailureAction
+  | LoadFollowersRequestAction
+  | LoadFollowersSuccessAction
+  | LoadFollowersFailureAction;
 
 interface UserState {
   loadMyInfoLoading: boolean; // 유저 정보 가져오기 시도중
@@ -226,6 +288,15 @@ interface UserState {
   unfollowLoading: boolean; // 언팔로우 시도중
   unfollowDone: boolean;
   unfollowError: string | null;
+  loadFollowingsLoading: boolean;
+  loadFollowingsDone: boolean;
+  loadFollowingsError: string | null;
+  loadFollowersLoading: boolean;
+  loadFollowersDone: boolean;
+  loadFollowersError: string | null;
+  removeFollowerLoading: boolean;
+  removeFollowerDone: boolean;
+  removeFollowerError: string | null;
   me: IMe | LoadMyInfoSuccessData | null;
 }
 
@@ -251,6 +322,15 @@ const initialState: UserState = {
   unfollowLoading: false, // 언팔로우 시도중
   unfollowDone: false,
   unfollowError: null,
+  loadFollowingsLoading: false,
+  loadFollowingsDone: false,
+  loadFollowingsError: null,
+  loadFollowersLoading: false,
+  loadFollowersDone: false,
+  loadFollowersError: null,
+  removeFollowerLoading: false,
+  removeFollowerDone: false,
+  removeFollowerError: null,
   me: null,
 };
 
@@ -263,9 +343,87 @@ export const logoutRequestAction = (): UserActionTypes => ({
   type: LOG_OUT_REQUEST,
 });
 
+export const followRequestAction = (data: number): UserActionTypes => ({
+  type: FOLLOW_REQUEST,
+  data,
+});
+
+export const unfollowRequestAction = (data: number): UserActionTypes => ({
+  type: UNFOLLOW_REQUEST,
+  data,
+});
+
+export const changeNicknameRequestAction = (data: string): UserActionTypes => ({
+  type: CHANGE_NICKNAME_REQUEST,
+  data,
+});
+
+export const loadFollowersRequestAction = (): UserActionTypes => ({
+  type: LOAD_FOLLOWERS_REQUEST,
+});
+
+export const loadFollowingsRequestAction = (): UserActionTypes => ({
+  type: LOAD_FOLLOWINGS_REQUEST,
+});
+
+export const removeFollowerRequestAction = (data: number): UserActionTypes => ({
+  type: REMOVE_FOLLOWER_REQUEST,
+  data,
+});
+
 // eslint-disable-next-line max-len
 const reducer = (state: UserState = initialState, action: UserActionTypes): UserState => produce(state, (draft) => {
   switch (action.type) {
+    case REMOVE_FOLLOWER_REQUEST:
+      draft.removeFollowerLoading = true;
+      draft.removeFollowerError = null;
+      draft.removeFollowerDone = false;
+      break;
+    case REMOVE_FOLLOWER_SUCCESS:
+      if (draft.me) {
+        draft.me.Followers = draft.me.Followers.filter((v) => v.id !== action.data.UserId);
+      }
+      draft.removeFollowerLoading = false;
+      draft.removeFollowerDone = true;
+      break;
+    case REMOVE_FOLLOWER_FAILURE:
+      draft.removeFollowerLoading = false;
+      draft.removeFollowerError = action.error;
+      break;
+    case LOAD_FOLLOWINGS_REQUEST:
+      draft.loadFollowingsLoading = true;
+      draft.loadFollowingsError = null;
+      draft.loadFollowingsDone = false;
+      break;
+    case LOAD_FOLLOWINGS_SUCCESS: {
+      if (draft.me) {
+        draft.me.Followings = action.data;
+      }
+      draft.loadFollowingsLoading = false;
+      draft.loadFollowingsDone = true;
+      break;
+    }
+    case LOAD_FOLLOWINGS_FAILURE:
+      draft.loadFollowingsLoading = false;
+      draft.loadFollowingsError = action.error;
+      break;
+    case LOAD_FOLLOWERS_REQUEST:
+      draft.loadFollowersLoading = true;
+      draft.loadFollowersError = null;
+      draft.loadFollowersDone = false;
+      break;
+    case LOAD_FOLLOWERS_SUCCESS: {
+      if (draft.me) {
+        draft.me.Followers = action.data;
+      }
+      draft.loadFollowersLoading = false;
+      draft.loadFollowersDone = true;
+      break;
+    }
+    case LOAD_FOLLOWERS_FAILURE:
+      draft.loadFollowersLoading = false;
+      draft.loadFollowersError = action.error;
+      break;
     case LOAD_MY_INFO_REQUEST:
       draft.loadMyInfoLoading = true;
       draft.loadMyInfoError = null;
@@ -288,7 +446,7 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
     case FOLLOW_SUCCESS:
       draft.followLoading = false;
       draft.followDone = true;
-      draft.me?.Followings.push({ id: action.data });
+      draft.me?.Followings.push({ id: action.data.UserId });
       break;
     case FOLLOW_FAILURE:
       draft.followLoading = false;
@@ -299,11 +457,14 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
       draft.unfollowError = null;
       draft.unfollowDone = false;
       break;
-    case UNFOLLOW_SUCCESS:
+    case UNFOLLOW_SUCCESS: {
       draft.unfollowLoading = false;
       draft.unfollowDone = true;
-      draft.me.Followings = draft.me?.Followings.filter((v) => v.id !== action.data);
+      if (draft.me) {
+        draft.me.Followings = draft.me?.Followings.filter((v) => v.id !== action.data.UserId);
+      }
       break;
+    }
     case UNFOLLOW_FAILURE:
       draft.unfollowLoading = false;
       draft.unfollowError = action.error;
@@ -367,11 +528,14 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
       draft.changeNicknameError = action.error;
       break;
     case ADD_POST_TO_ME:
-      draft.me?.Posts.unshift({ id: action.data });
+      draft.me?.Posts.unshift(action.data);
       break;
-    case REMOVE_POST_OF_ME:
-      draft.me.Posts = draft.me?.Posts.filter((v) => v.id !== action.data);
+    case REMOVE_POST_OF_ME: {
+      if (draft.me) {
+        draft.me.Posts = draft.me?.Posts.filter((v) => v.id !== action.data);
+      }
       break;
+    }
     default:
       break;
   }

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IMainPost } from '../reducers/post';
 import { RootState } from '../reducers';
-import { FOLLOW_REQUEST, UNFOLLOW_REQUEST } from '../reducers/user';
+import {followRequestAction, unfollowRequestAction} from '../reducers/user';
 
 interface IProps {
   post: IMainPost;
@@ -16,15 +16,9 @@ const FollowButton = ({ post }: IProps) => {
   const isFollowing = me?.Followings.find((v) => v.id === post.User.id);
   const onClickButton = useCallback(() => {
     if (isFollowing) {
-      dispatch({
-        type: UNFOLLOW_REQUEST,
-        data: post.User.id,
-      });
+      dispatch(unfollowRequestAction(post.User.id));
     } else {
-      dispatch({
-        type: FOLLOW_REQUEST,
-        data: post.User.id,
-      });
+      dispatch(followRequestAction(post.User.id));
     }
   }, [isFollowing]);
   if (post.User.id === me?.id) {

@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect} from 'react';
-import {Button, Form, message} from 'antd';
+import React, { useCallback, useEffect } from 'react';
+import { Button, Form, message } from 'antd';
 import Link from 'next/link';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
