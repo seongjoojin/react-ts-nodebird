@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import {
   AddCommentRequestAction,
@@ -28,7 +28,34 @@ import {
   UNLIKE_POST_FAILURE,
   LikePostRequestAction,
   UnLikePostRequestAction,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  UploadImagesRequestAction,
 } from '../reducers/post';
+
+function uploadImagesAPI(data: FormData) {
+  return axios.post('/post/images', data);
+}
+
+function* uploadImages(action: UploadImagesRequestAction) {
+  try {
+    const result: AxiosResponse<IMainPost> = yield call(uploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
 
 function addPostAPI(data: string) {
   return axios.post('/post', { content: data });
@@ -134,7 +161,7 @@ function removePostAPI(data: number) {
 
 function* removePost(action: RemovePostRequestAction) {
   try {
-    const result: AxiosResponse<any> = yield call(removePostAPI, action.data);
+    const result: AxiosResponse<{ PostId: number }> = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
       data: result.data,
@@ -179,6 +206,7 @@ function* watchAddComment() {
 }
 export default function* postSaga() {
   yield all([
+    fork(watchUploadImages),
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchAddPost),

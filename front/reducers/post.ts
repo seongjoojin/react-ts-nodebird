@@ -45,11 +45,13 @@ export const RETWEET_SUCCESS = 'RETWEET_SUCCESS' as const;
 export const RETWEET_FAILURE = 'RETWEET_FAILURE' as const;
 
 export interface UploadImagesRequestAction {
-  type: typeof UPLOAD_IMAGES_REQUEST
+  type: typeof UPLOAD_IMAGES_REQUEST;
+  data: FormData;
 }
 
 export interface UploadImagesSuccessAction {
   type: typeof UPLOAD_IMAGES_SUCCESS
+  data: string[];
 }
 
 export interface UploadImagesFailureAction {
@@ -356,9 +358,29 @@ export const removePostRequestAction = (data: number) => ({
   data,
 });
 
+export const uploadImagesRequestAction = (data: FormData) => ({
+  type: UPLOAD_IMAGES_REQUEST,
+  data,
+});
+
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
+    case UPLOAD_IMAGES_REQUEST:
+      draft.uploadImagesLoading = true;
+      draft.uploadImagesDone = false;
+      draft.uploadImagesError = null;
+      break;
+    case UPLOAD_IMAGES_SUCCESS: {
+      draft.imagePaths = action.data;
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesDone = true;
+      break;
+    }
+    case UPLOAD_IMAGES_FAILURE:
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesError = action.error;
+      break;
     case LIKE_POST_REQUEST:
       draft.likePostLoading = true;
       draft.likePostDone = false;

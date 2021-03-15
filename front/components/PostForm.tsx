@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '../reducers';
-import { addPostRequestAction } from '../reducers/post';
+import { addPostRequestAction, uploadImagesRequestAction } from '../reducers/post';
 import useInput from '../hooks/useInput';
 
 const FormWrapper = styled(Form)`
@@ -42,6 +42,14 @@ const PostFrom = () => {
   const onClickImageUpload = useCallback(() => {
     imageInput.current?.click();
   }, [imageInput.current]);
+  const onChangeImages = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('images', e.target.files);
+    const imageFormData = new FormData();
+    [].forEach.call(e.target.files, (f: string) => {
+      imageFormData.append('image', f);
+    });
+    dispatch(uploadImagesRequestAction(imageFormData));
+  }, []);
 
   return (
     <FormWrapper encType="multipart/form-data" onFinish={onSubmit}>
@@ -52,7 +60,7 @@ const PostFrom = () => {
         placeholder="어떤 신기한 일이 있었나요?"
       />
       <div>
-        <input type="file" multiple hidden ref={imageInput} />
+        <input type="file" name="image" multiple hidden ref={imageInput} onChange={onChangeImages} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
         <SubmitButton type="primary" htmlType="submit">짹짹</SubmitButton>
       </div>

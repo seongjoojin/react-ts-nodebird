@@ -78,6 +78,9 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST 
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => { // POST /post/images
   console.log(req.files);
+  if (!req.files) {
+    return res.status(404).send('파일이 없습니다.');
+  }
   res.json(req.files.map((v) => v.filename));
 });
 

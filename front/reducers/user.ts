@@ -210,7 +210,7 @@ export interface LoadFollowingsRequestAction {
 
 export interface LoadFollowingsSuccessAction {
   type: typeof LOAD_FOLLOWINGS_SUCCESS;
-  data: { id: number; nickname?: string; Follow?: FollowType[] };
+  data: Array<{ id: number; nickname?: string; Follow?: FollowType[] }>;
 }
 
 export interface LoadFollowingsFailureAction {
@@ -224,7 +224,7 @@ export interface LoadFollowersRequestAction {
 
 export interface LoadFollowersSuccessAction {
   type: typeof LOAD_FOLLOWERS_SUCCESS;
-  data: { id: number; nickname?: string; Follow?: FollowType[] };
+  data: Array<{ id: number; nickname?: string; Follow?: FollowType[] }>;
 }
 
 export interface LoadFollowersFailureAction {
@@ -397,7 +397,8 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
       break;
     case LOAD_FOLLOWINGS_SUCCESS: {
       if (draft.me) {
-        draft.me.Followings = action.data;
+        draft.me.Followings.splice(-1);
+        draft.me.Followings = draft.me.Followings.concat(...action.data);
       }
       draft.loadFollowingsLoading = false;
       draft.loadFollowingsDone = true;
@@ -414,7 +415,8 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
       break;
     case LOAD_FOLLOWERS_SUCCESS: {
       if (draft.me) {
-        draft.me.Followers = action.data;
+        draft.me.Followers.splice(-1);
+        draft.me.Followers = draft.me.Followers.concat(...action.data);
       }
       draft.loadFollowersLoading = false;
       draft.loadFollowersDone = true;
