@@ -44,6 +44,8 @@ export const RETWEET_REQUEST = 'RETWEET_REQUEST' as const;
 export const RETWEET_SUCCESS = 'RETWEET_SUCCESS' as const;
 export const RETWEET_FAILURE = 'RETWEET_FAILURE' as const;
 
+export const REMOVE_IMAGE = 'REMOVE_IMAGE' as const;
+
 export interface UploadImagesRequestAction {
   type: typeof UPLOAD_IMAGES_REQUEST;
   data: FormData;
@@ -132,7 +134,7 @@ export interface LoadPostsFailureAction {
 
 export interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST;
-  data: string ;
+  data: FormData ;
 }
 
 export interface AddPostSuccessAction {
@@ -188,6 +190,11 @@ export interface ReTweetFailureAction {
   error: string;
 }
 
+export interface RemoveImageAction {
+  type: typeof REMOVE_IMAGE;
+  data: number;
+}
+
 type PostActionTypes =
   | UploadImagesRequestAction
   | UploadImagesSuccessAction
@@ -218,7 +225,8 @@ type PostActionTypes =
   | RemovePostFailureAction
   | ReTweetRequestAction
   | ReTweetSuccessAction
-  | ReTweetFailureAction;
+  | ReTweetFailureAction
+  | RemoveImageAction;
 
 export interface IMainPost {
   id: number;
@@ -331,7 +339,7 @@ const initialState: PostState = {
   retweetError: null,
 };
 
-export const addPostRequestAction = (data: string) => ({
+export const addPostRequestAction = (data: FormData) => ({
   type: ADD_POST_REQUEST,
   data,
 });
@@ -363,9 +371,17 @@ export const uploadImagesRequestAction = (data: FormData) => ({
   data,
 });
 
+export const removeImageAction = (data: number) => ({
+  type: REMOVE_IMAGE,
+  data,
+});
+
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
+    case REMOVE_IMAGE:
+      draft.imagePaths.splice(action.data, 1);
+      break;
     case UPLOAD_IMAGES_REQUEST:
       draft.uploadImagesLoading = true;
       draft.uploadImagesDone = false;
@@ -405,8 +421,8 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
     case UNLIKE_POST_SUCCESS: {
       const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
       if (post) {
-        post.Likers = post?.Likers.filter((v) => v.id !== action.data.UserId)
-          ? post?.Likers.filter((v) => v.id !== action.data.UserId) : [];
+        const index = post?.Likers.findIndex((v) => v.id === action.data.UserId);
+        if (index !== -1) post?.Likers.splice(index, 1);
       }
       draft.unlikePostLoading = false;
       draft.unlikePostDone = true;
@@ -440,6 +456,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.mainPosts.unshift(action.data);
       draft.addPostLoading = false;
       draft.addPostDone = true;
+      draft.imagePaths = [];
       break;
     case ADD_POST_FAILURE:
       draft.addPostLoading = false;
@@ -450,11 +467,13 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.removePostDone = false;
       draft.removePostError = null;
       break;
-    case REMOVE_POST_SUCCESS:
-      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
+    case REMOVE_POST_SUCCESS: {
+      const index = draft.mainPosts.findIndex((v) => v.id === action.data.PostId);
+      if (index !== -1) draft.mainPosts.splice(index, 1);
       draft.removePostLoading = false;
       draft.removePostDone = true;
       break;
+    }
     case REMOVE_POST_FAILURE:
       draft.removePostLoading = false;
       draft.removePostError = action.error;

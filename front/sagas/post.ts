@@ -57,8 +57,8 @@ function* watchUploadImages() {
   yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
 
-function addPostAPI(data: string) {
-  return axios.post('/post', { content: data });
+function addPostAPI(data: FormData) {
+  return axios.post('/post', data);
 }
 
 function* addPost(action: AddPostRequestAction) {
