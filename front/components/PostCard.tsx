@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Card, Popover, Button, Avatar, List, Comment, message } from 'antd';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,8 @@ import styled from '@emotion/styled';
 import {
   IMainPost,
   likePostRequestAction,
-  removePostRequestAction, retweetAction,
+  removePostRequestAction,
+  retweetRequestAction,
   unlikePostRequestAction,
 } from '../reducers/post';
 import { RootState } from '../reducers';
@@ -60,7 +61,7 @@ const PostCard = ({ post }: IProps) => {
       message.info('로그인이 필요합니다.');
       return;
     }
-    dispatch(retweetAction(post.id));
+    dispatch(retweetRequestAction(post.id));
   }, []);
   return (
     <CardWrapper>

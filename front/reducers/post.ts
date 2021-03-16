@@ -119,7 +119,7 @@ export interface LoadUserPostsFailureAction {
 
 export interface LoadPostsRequestAction {
   type: typeof LOAD_POSTS_REQUEST;
-  lastId: number;
+  lastId: number | undefined;
 }
 
 export interface LoadPostsSuccessAction {
@@ -350,46 +350,51 @@ const initialState: PostState = {
   retweetError: null,
 };
 
-export const addPostRequestAction = (data: FormData) => ({
+export const addPostRequestAction = (data: FormData): PostActionTypes => ({
   type: ADD_POST_REQUEST,
   data,
 });
 
 export const addCommentRequestAction = (data: {
   content: string, postId: number, userId: number
-}) => ({
+}): PostActionTypes => ({
   type: ADD_COMMENT_REQUEST,
   data,
 });
 
-export const likePostRequestAction = (data: number) => ({
+export const likePostRequestAction = (data: number): PostActionTypes => ({
   type: LIKE_POST_REQUEST,
   data,
 });
 
-export const unlikePostRequestAction = (data: number) => ({
+export const unlikePostRequestAction = (data: number): PostActionTypes => ({
   type: UNLIKE_POST_REQUEST,
   data,
 });
 
-export const removePostRequestAction = (data: number) => ({
+export const removePostRequestAction = (data: number): PostActionTypes => ({
   type: REMOVE_POST_REQUEST,
   data,
 });
 
-export const uploadImagesRequestAction = (data: FormData) => ({
+export const uploadImagesRequestAction = (data: FormData): PostActionTypes => ({
   type: UPLOAD_IMAGES_REQUEST,
   data,
 });
 
-export const removeImageAction = (data: number) => ({
+export const removeImageAction = (data: number): PostActionTypes => ({
   type: REMOVE_IMAGE,
   data,
 });
 
-export const retweetAction = (data: number) => ({
+export const retweetRequestAction = (data: number): PostActionTypes => ({
   type: RETWEET_REQUEST,
   data,
+});
+
+export const loadPostsRequestAction = (lastId: number | undefined): PostActionTypes => ({
+  type: LOAD_POSTS_REQUEST,
+  lastId,
 });
 
 // eslint-disable-next-line max-len
@@ -468,7 +473,7 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.loadPostsError = null;
       break;
     case LOAD_POSTS_SUCCESS:
-      draft.mainPosts = action.data.concat(draft.mainPosts);
+      draft.mainPosts = draft.mainPosts.concat(action.data);
       draft.loadPostsLoading = false;
       draft.loadPostsDone = true;
       draft.hasMorePosts = action.data.length === 10;

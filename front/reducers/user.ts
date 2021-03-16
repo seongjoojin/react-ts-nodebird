@@ -371,6 +371,10 @@ export const removeFollowerRequestAction = (data: number): UserActionTypes => ({
   data,
 });
 
+export const loadMyInfoRequestAction = ():UserActionTypes => ({
+  type: LOAD_MY_INFO_REQUEST,
+});
+
 // eslint-disable-next-line max-len
 const reducer = (state: UserState = initialState, action: UserActionTypes): UserState => produce(state, (draft) => {
   switch (action.type) {

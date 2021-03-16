@@ -1,14 +1,14 @@
-import {message} from 'antd';
+import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { RootState } from '../reducers';
-import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
-import { LOAD_POSTS_REQUEST } from '../reducers/post';
-import useInfiniteScroll from '../hooks/useInfiniteScroll';
+import { loadMyInfoRequestAction } from '../reducers/user';
+import { loadPostsRequestAction } from '../reducers/post';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -18,9 +18,8 @@ const Home = () => {
     (state: RootState) => state.post,
   );
   useEffect(() => {
-    dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
+    dispatch(loadPostsRequestAction(undefined));
+    dispatch(loadMyInfoRequestAction());
   }, []);
   useEffect(() => {
     if (retweetError) {
@@ -33,10 +32,7 @@ const Home = () => {
       if (isIntersecting) {
         if (hasMorePosts && !loadPostsLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id;
-          dispatch({
-            type: LOAD_POSTS_REQUEST,
-            lastId,
-          });
+          dispatch(loadPostsRequestAction(lastId));
         }
       }
     },
