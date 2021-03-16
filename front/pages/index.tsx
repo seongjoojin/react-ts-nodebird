@@ -1,3 +1,4 @@
+import {message} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -13,7 +14,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const { me } = useSelector((state: RootState) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
     (state: RootState) => state.post,
   );
   useEffect(() => {
@@ -21,6 +22,11 @@ const Home = () => {
       type: LOAD_MY_INFO_REQUEST,
     });
   }, []);
+  useEffect(() => {
+    if (retweetError) {
+      message.error(retweetError);
+    }
+  }, [retweetError]);
   useInfiniteScroll({
     target,
     handleIntersect([{ isIntersecting }]) {

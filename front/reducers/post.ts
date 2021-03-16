@@ -178,7 +178,8 @@ export interface AddCommentFailureAction {
 }
 
 export interface ReTweetRequestAction {
-  type: typeof RETWEET_REQUEST
+  type: typeof RETWEET_REQUEST;
+  data: number;
 }
 
 export interface ReTweetSuccessAction {
@@ -258,6 +259,16 @@ export interface IMainPost {
       updatedAt: string;
     }>
   }>
+  Retweet: {
+    id:number;
+    UserId: number;
+    content:string;
+    RetweetId: number | null;
+    User: { id: number; nickname: string; }
+    Images: Array<{ id: number; src: string }>;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
   RetweetId: number | null;
   createdAt: string;
   updatedAt: string;
@@ -376,11 +387,30 @@ export const removeImageAction = (data: number) => ({
   data,
 });
 
+export const retweetAction = (data: number) => ({
+  type: RETWEET_REQUEST,
+  data,
+});
+
 // eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
     case REMOVE_IMAGE:
       draft.imagePaths.splice(action.data, 1);
+      break;
+    case RETWEET_REQUEST:
+      draft.retweetLoading = true;
+      draft.retweetDone = false;
+      draft.retweetError = null;
+      break;
+    case RETWEET_SUCCESS: {
+      draft.retweetLoading = false;
+      draft.retweetDone = true;
+      break;
+    }
+    case RETWEET_FAILURE:
+      draft.retweetLoading = false;
+      draft.retweetError = action.error;
       break;
     case UPLOAD_IMAGES_REQUEST:
       draft.uploadImagesLoading = true;
