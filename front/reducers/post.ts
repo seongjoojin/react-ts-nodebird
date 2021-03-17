@@ -196,7 +196,7 @@ export interface RemoveImageAction {
   data: number;
 }
 
-type PostActionTypes =
+export type PostActionTypes =
   | UploadImagesRequestAction
   | UploadImagesSuccessAction
   | UploadImagesFailureAction
@@ -284,7 +284,7 @@ export interface AddCommentSuccessData {
   updatedAt: string;
 }
 
-interface PostState {
+export interface PostState {
   mainPosts: IMainPost[];
   imagePaths: string[];
   hasMorePosts: boolean;

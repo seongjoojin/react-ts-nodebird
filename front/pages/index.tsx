@@ -1,7 +1,9 @@
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { END } from 'redux-saga';
 
+import wrapper, { SagaStore } from '../store/configureStore';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
@@ -17,10 +19,6 @@ const Home = () => {
   const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
     (state: RootState) => state.post,
   );
-  useEffect(() => {
-    dispatch(loadPostsRequestAction(undefined));
-    dispatch(loadMyInfoRequestAction());
-  }, []);
   useEffect(() => {
     if (retweetError) {
       message.error(retweetError);
@@ -48,5 +46,12 @@ const Home = () => {
     </AppLayout>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  context.store.dispatch(loadPostsRequestAction(undefined));
+  context.store.dispatch(loadMyInfoRequestAction());
+  context.store.dispatch(END);
+  await (context.store as SagaStore).sagaTask?.toPromise();
+});
 
 export default Home;

@@ -266,7 +266,7 @@ export type UserActionTypes =
   | LoadFollowersSuccessAction
   | LoadFollowersFailureAction;
 
-interface UserState {
+export interface UserState {
   loadMyInfoLoading: boolean; // 유저 정보 가져오기 시도중
   loadMyInfoDone: boolean;
   loadMyInfoError: string | null;
