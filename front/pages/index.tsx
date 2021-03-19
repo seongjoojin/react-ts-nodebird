@@ -1,16 +1,17 @@
 import { message } from 'antd';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { END } from 'redux-saga';
+import AppLayout from '../components/AppLayout';
+import PostCard from '../components/PostCard';
+import PostForm from '../components/PostForm';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
+import { RootState } from '../reducers';
+import { loadPostsRequestAction } from '../reducers/post';
+import { loadMyInfoRequestAction } from '../reducers/user';
 
 import wrapper, { SagaStore } from '../store/configureStore';
-import useInfiniteScroll from '../hooks/useInfiniteScroll';
-import AppLayout from '../components/AppLayout';
-import PostForm from '../components/PostForm';
-import PostCard from '../components/PostCard';
-import { RootState } from '../reducers';
-import { loadMyInfoRequestAction } from '../reducers/user';
-import { loadPostsRequestAction } from '../reducers/post';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -48,8 +49,13 @@ const Home = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  context.store.dispatch(loadPostsRequestAction(undefined));
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
   context.store.dispatch(loadMyInfoRequestAction());
+  context.store.dispatch(loadPostsRequestAction(undefined));
   context.store.dispatch(END);
   await (context.store as SagaStore).sagaTask?.toPromise();
 });

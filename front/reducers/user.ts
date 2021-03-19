@@ -165,17 +165,18 @@ export interface UnFollowFailureAction {
   error: string;
 }
 
-export interface LoadMyInfoRequestAction {
-  type: typeof LOAD_MY_INFO_REQUEST;
+export interface LoadUserRequestAction {
+  type: typeof LOAD_USER_REQUEST;
+  data: number;
 }
 
-export interface LoadMyInfoSuccessAction {
-  type: typeof LOAD_MY_INFO_SUCCESS;
-  data: LoadMyInfoSuccessData | null;
+export interface LoadUserSuccessAction {
+  type: typeof LOAD_USER_SUCCESS;
+  data: IMe | null;
 }
 
-export interface LoadMyInfoFailureAction {
-  type: typeof LOAD_MY_INFO_FAILURE;
+export interface LoadUserFailureAction {
+  type: typeof LOAD_USER_FAILURE;
   error: string;
 }
 
@@ -232,6 +233,20 @@ export interface LoadFollowersFailureAction {
   error: string;
 }
 
+export interface LoadMyInfoRequestAction {
+  type: typeof LOAD_MY_INFO_REQUEST;
+}
+
+export interface LoadMyInfoSuccessAction {
+  type: typeof LOAD_MY_INFO_SUCCESS;
+  data: LoadMyInfoSuccessData | null;
+}
+
+export interface LoadMyInfoFailureAction {
+  type: typeof LOAD_MY_INFO_FAILURE;
+  error: string;
+}
+
 export type UserActionTypes =
   | LoginSuccessAction
   | LoginFailureAction
@@ -264,12 +279,18 @@ export type UserActionTypes =
   | LoadFollowingsFailureAction
   | LoadFollowersRequestAction
   | LoadFollowersSuccessAction
-  | LoadFollowersFailureAction;
+  | LoadFollowersFailureAction
+  | LoadUserRequestAction
+  | LoadUserSuccessAction
+  | LoadUserFailureAction;
 
 export interface UserState {
   loadMyInfoLoading: boolean; // 유저 정보 가져오기 시도중
   loadMyInfoDone: boolean;
   loadMyInfoError: string | null;
+  loadUserLoading: boolean;
+  loadUserDone: boolean;
+  loadUserError: string | null;
   logInLoading: boolean; // 로그인 시도중
   logInDone: boolean;
   logInError: string | null;
@@ -298,12 +319,16 @@ export interface UserState {
   removeFollowerDone: boolean;
   removeFollowerError: string | null;
   me: IMe | LoadMyInfoSuccessData | null;
+  userInfo: IMe | null,
 }
 
 const initialState: UserState = {
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
+  loadUserLoading: false,
+  loadUserDone: false,
+  loadUserError: null,
   logInLoading: false,
   logInDone: false,
   logInError: null,
@@ -332,6 +357,7 @@ const initialState: UserState = {
   removeFollowerDone: false,
   removeFollowerError: null,
   me: null,
+  userInfo: null,
 };
 
 export const loginRequestAction = (data: { email: string; password: string }): UserActionTypes => ({
@@ -443,6 +469,20 @@ const reducer = (state: UserState = initialState, action: UserActionTypes): User
     case LOAD_MY_INFO_FAILURE:
       draft.loadMyInfoLoading = false;
       draft.loadMyInfoError = action.error;
+      break;
+    case LOAD_USER_REQUEST:
+      draft.loadUserLoading = true;
+      draft.loadUserError = null;
+      draft.loadUserDone = false;
+      break;
+    case LOAD_USER_SUCCESS:
+      draft.loadUserLoading = false;
+      draft.userInfo = action.data;
+      draft.loadUserDone = true;
+      break;
+    case LOAD_USER_FAILURE:
+      draft.loadUserLoading = false;
+      draft.loadUserError = action.error;
       break;
     case FOLLOW_REQUEST:
       draft.followLoading = true;
