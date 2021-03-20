@@ -77,6 +77,17 @@ export interface LoadMyInfoSuccessData {
   updatedAt: string;
 }
 
+export interface LoadUserInfoData {
+  email: string;
+  id: number;
+  nickname: string;
+  Posts: number;
+  Followings: number;
+  Followers: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LoginRequestAction {
   type: typeof LOG_IN_REQUEST
   data: { email: string; password: string }
@@ -172,7 +183,7 @@ export interface LoadUserRequestAction {
 
 export interface LoadUserSuccessAction {
   type: typeof LOAD_USER_SUCCESS;
-  data: IMe | null;
+  data: LoadUserInfoData | null;
 }
 
 export interface LoadUserFailureAction {
@@ -319,7 +330,7 @@ export interface UserState {
   removeFollowerDone: boolean;
   removeFollowerError: string | null;
   me: IMe | LoadMyInfoSuccessData | null;
-  userInfo: IMe | null,
+  userInfo: LoadUserInfoData | null,
 }
 
 const initialState: UserState = {
@@ -399,6 +410,11 @@ export const removeFollowerRequestAction = (data: number): UserActionTypes => ({
 
 export const loadMyInfoRequestAction = ():UserActionTypes => ({
   type: LOAD_MY_INFO_REQUEST,
+});
+
+export const loadUserRequestAction = (data: number):UserActionTypes => ({
+  type: LOAD_USER_REQUEST,
+  data,
 });
 
 // eslint-disable-next-line max-len

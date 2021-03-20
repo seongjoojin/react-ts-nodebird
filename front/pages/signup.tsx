@@ -1,14 +1,17 @@
+import axios from 'axios';
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 import Head from 'next/head';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-
 import { useRouter } from 'next/router';
+import { END } from 'redux-saga';
+
+import wrapper, { SagaStore } from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
-import { SIGN_UP_REQUEST } from '../reducers/user';
+import { loadMyInfoRequestAction, SIGN_UP_REQUEST } from '../reducers/user';
 import { RootState } from '../reducers';
 
 const ErrorMessage = styled.p`
@@ -22,7 +25,9 @@ const SubmitButton = styled(Button)`
 const Signup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state: RootState) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
+    (state: RootState) => state.user,
+  );
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -139,5 +144,16 @@ const Signup = () => {
     </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(loadMyInfoRequestAction());
+  context.store.dispatch(END);
+  await (context.store as SagaStore).sagaTask?.toPromise();
+});
 
 export default Signup;
