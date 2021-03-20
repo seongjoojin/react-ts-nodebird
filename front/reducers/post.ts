@@ -92,11 +92,14 @@ export interface UnLikePostFailureAction {
 }
 
 export interface LoadHashtagPostsRequestAction {
-  type: typeof LOAD_HASHTAG_POSTS_REQUEST
+  type: typeof LOAD_HASHTAG_POSTS_REQUEST;
+  lastId: number | undefined;
+  data: string;
 }
 
 export interface LoadHashtagPostsSuccessAction {
-  type: typeof LOAD_HASHTAG_POSTS_SUCCESS
+  type: typeof LOAD_HASHTAG_POSTS_SUCCESS;
+  data: IMainPost[];
 }
 
 export interface LoadHashtagPostsFailureAction {
@@ -105,11 +108,14 @@ export interface LoadHashtagPostsFailureAction {
 }
 
 export interface LoadUserPostsRequestAction {
-  type: typeof LOAD_USER_POSTS_REQUEST
+  type: typeof LOAD_USER_POSTS_REQUEST;
+  lastId: number | undefined;
+  data: number;
 }
 
 export interface LoadUserPostsSuccessAction {
-  type: typeof LOAD_USER_POSTS_SUCCESS
+  type: typeof LOAD_USER_POSTS_SUCCESS;
+  data: IMainPost[];
 }
 
 export interface LoadUserPostsFailureAction {
@@ -423,6 +429,20 @@ export const loadPostsRequestAction = (lastId: number | undefined): PostActionTy
 });
 
 // eslint-disable-next-line max-len
+export const loadUserPostsRequestAction = (data: number, lastId: number | undefined): PostActionTypes => ({
+  type: LOAD_USER_POSTS_REQUEST,
+  data,
+  lastId,
+});
+
+// eslint-disable-next-line max-len
+export const loadHashtagPostsRequestAction = (data: string, lastId: number | undefined): PostActionTypes => ({
+  type: LOAD_HASHTAG_POSTS_REQUEST,
+  data,
+  lastId,
+});
+
+// eslint-disable-next-line max-len
 const reducer = (state: PostState = initialState, action: PostActionTypes): PostState => produce(state, (draft) => {
   switch (action.type) {
     case REMOVE_IMAGE:
@@ -506,17 +526,23 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
       draft.loadPostLoading = false;
       draft.loadPostError = action.error;
       break;
+    case LOAD_USER_POSTS_REQUEST:
+    case LOAD_HASHTAG_POSTS_REQUEST:
     case LOAD_POSTS_REQUEST:
       draft.loadPostsLoading = true;
       draft.loadPostsDone = false;
       draft.loadPostsError = null;
       break;
+    case LOAD_USER_POSTS_SUCCESS:
+    case LOAD_HASHTAG_POSTS_SUCCESS:
     case LOAD_POSTS_SUCCESS:
       draft.mainPosts = draft.mainPosts.concat(action.data);
       draft.loadPostsLoading = false;
       draft.loadPostsDone = true;
       draft.hasMorePosts = action.data.length === 10;
       break;
+    case LOAD_USER_POSTS_FAILURE:
+    case LOAD_HASHTAG_POSTS_FAILURE:
     case LOAD_POSTS_FAILURE:
       draft.loadPostsLoading = false;
       draft.loadPostsError = action.error;

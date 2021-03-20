@@ -38,7 +38,16 @@ import {
   ReTweetRequestAction,
   LoadPostRequestAction,
   LOAD_POST_SUCCESS,
-  LOAD_POST_FAILURE, LOAD_POST_REQUEST,
+  LOAD_POST_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LoadHashtagPostsRequestAction,
+  LoadUserPostsRequestAction,
 } from '../reducers/post';
 
 function retweetAPI(data: number) {
@@ -147,6 +156,60 @@ function* loadPost(action: LoadPostRequestAction) {
 
 function* watchLoadPost() {
   yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
+
+function loadUserPostsAPI(data: number, lastId: number | undefined) {
+  return axios.get<{ data: IMainPost[] }>(`/user/${data}/posts?lastId=${lastId || 0}`);
+}
+
+function* loadUserPosts(action:LoadUserPostsRequestAction) {
+  try {
+    const result: AxiosResponse<IMainPost[]> = yield call(
+      loadUserPostsAPI,
+      action.data,
+      action.lastId,
+    );
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* watchLoadUserPosts() {
+  yield takeLatest(LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+
+function loadHashtagPostsAPI(data: string, lastId: number | undefined) {
+  return axios.get<{ data: IMainPost[] }>(`/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}`);
+}
+
+function* loadHashtagPosts(action: LoadHashtagPostsRequestAction) {
+  try {
+    const result: AxiosResponse<IMainPost[]> = yield call(
+      loadHashtagPostsAPI,
+      action.data,
+      action.lastId,
+    );
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* watchLoadHashtagPosts() {
+  yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
 }
 
 function loadPostsAPI(lastId: number | undefined) {
@@ -301,6 +364,8 @@ export default function* postSaga() {
     fork(watchUnlikePost),
     fork(watchAddPost),
     fork(watchLoadPost),
+    fork(watchLoadUserPosts),
+    fork(watchLoadHashtagPosts),
     fork(watchLoadPosts),
     fork(watchRemovePost),
     fork(watchAddComment),
