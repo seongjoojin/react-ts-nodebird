@@ -42,11 +42,13 @@ import {
   REMOVE_FOLLOWER_FAILURE,
   RemoveFollowerRequestAction,
   LOAD_USER_SUCCESS,
-  LOAD_USER_FAILURE, LOAD_USER_REQUEST, LoadUserRequestAction,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST,
+  LoadUserRequestAction,
 } from '../reducers/user';
 
-function loadUserAPI(data:number) {
-  return axios.get(`/user/${data}`);
+function loadUserAPI(data: number) {
+  return axios.get<{ data: IMe }>(`/user/${data}`);
 }
 
 function* loadUser(action: LoadUserRequestAction) {
@@ -70,7 +72,7 @@ function* watchLoadUser() {
 }
 
 function loginAPI(data: { email: string; password: string }) {
-  return axios.post('/user/login', data);
+  return axios.post<{ data: LoginRequestAction }>('/user/login', data);
 }
 
 function* login(action: LoginRequestAction) {
@@ -119,7 +121,7 @@ function signUpAPI(data: {
   password: string;
   nickname: string;
 }) {
-  return axios.post('/user', data);
+  return axios.post<{ data: string }>('/user', data);
 }
 
 function* signUp(action: SignUpRequestAction) {
@@ -142,12 +144,12 @@ function* watchSignUp() {
 }
 
 function followAPI(data: number) {
-  return axios.patch(`/user/${data}/follow`);
+  return axios.patch<{ data: any }>(`/user/${data}/follow`);
 }
 
 function* follow(action: FollowRequestAction) {
   try {
-    const result = yield call(followAPI, action.data);
+    const result: AxiosResponse<any> = yield call(followAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
       data: result.data,
@@ -165,12 +167,12 @@ function* watchFollow() {
 }
 
 function unfollowAPI(data: number) {
-  return axios.delete(`/user/${data}/follow`);
+  return axios.delete<{ data: any }>(`/user/${data}/follow`);
 }
 
 function* unfollow(action: UnFollowRequestAction) {
   try {
-    const result = yield call(unfollowAPI, action.data);
+    const result: AxiosResponse<any> = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
       data: result.data,
@@ -188,12 +190,14 @@ function* watchUnfollow() {
 }
 
 function loadMyInfoAPI() {
-  return axios.get('/user');
+  return axios.get<{ data: LoadMyInfoSuccessData | null }>('/user');
 }
 
 function* loadMyInfo() {
   try {
-    const result: AxiosResponse<LoadMyInfoSuccessData | null> = yield call(loadMyInfoAPI);
+    const result: AxiosResponse<LoadMyInfoSuccessData | null> = yield call(
+      loadMyInfoAPI,
+    );
     yield put({
       type: LOAD_MY_INFO_SUCCESS,
       data: result.data,
@@ -211,12 +215,17 @@ function* watchLoadMyInfo() {
 }
 
 function changeNicknameAPI(data: string) {
-  return axios.patch('/user/nickname', { nickname: data });
+  return axios.patch<{ data: { nickname: string } }>('/user/nickname', {
+    nickname: data,
+  });
 }
 
 function* changeNickname(action: ChangeNickNameRequestAction) {
   try {
-    const result: AxiosResponse<{ nickname:string }> = yield call(changeNicknameAPI, action.data);
+    const result: AxiosResponse<{ nickname: string }> = yield call(
+      changeNicknameAPI,
+      action.data,
+    );
     yield put({
       type: CHANGE_NICKNAME_SUCCESS,
       data: result.data,
@@ -234,13 +243,17 @@ function* watchChangeNickName() {
 }
 
 function loadFollowersAPI() {
-  return axios.get('/user/followers?limit=1');
+  return axios.get<{
+    data: Array<{ id?: number; nickname?: string; Follow?: FollowType[] }>;
+  }>('/user/followers?limit=1');
 }
 
 function* loadFollowers() {
   try {
     // eslint-disable-next-line max-len
-    const result: AxiosResponse<Array<{ id?: number; nickname?: string; Follow?: FollowType[]; }>> = yield call(loadFollowersAPI);
+    const result: AxiosResponse<
+    Array<{ id?: number; nickname?: string; Follow?: FollowType[] }>
+    > = yield call(loadFollowersAPI);
     yield put({
       type: LOAD_FOLLOWERS_SUCCESS,
       data: result.data,
@@ -258,13 +271,17 @@ function* watchLoadFollowers() {
 }
 
 function loadFollowingsAPI() {
-  return axios.get('/user/followings?limit=1');
+  return axios.get<{
+    data: Array<{ id?: number; nickname?: string; Follow?: FollowType[] }>;
+  }>('/user/followings?limit=1');
 }
 
 function* loadFollowings() {
   try {
     // eslint-disable-next-line max-len
-    const result: AxiosResponse<Array<{ id?: number; nickname?: string; Follow?: FollowType[]; }>> = yield call(loadFollowingsAPI);
+    const result: AxiosResponse<
+    Array<{ id?: number; nickname?: string; Follow?: FollowType[] }>
+    > = yield call(loadFollowingsAPI);
     yield put({
       type: LOAD_FOLLOWINGS_SUCCESS,
       data: result.data,
@@ -282,12 +299,15 @@ function* watchLoadFollowings() {
 }
 
 function removeFollowerAPI(data: number) {
-  return axios.delete(`/user/follower/${data}`);
+  return axios.delete<{ data: any }>(`/user/follower/${data}`);
 }
 
 function* removeFollower(action: RemoveFollowerRequestAction) {
   try {
-    const result: AxiosResponse<any> = yield call(removeFollowerAPI, action.data);
+    const result: AxiosResponse<any> = yield call(
+      removeFollowerAPI,
+      action.data,
+    );
     yield put({
       type: REMOVE_FOLLOWER_SUCCESS,
       data: result.data,

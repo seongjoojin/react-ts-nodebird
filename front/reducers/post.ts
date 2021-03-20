@@ -132,6 +132,21 @@ export interface LoadPostsFailureAction {
   error: string;
 }
 
+export interface LoadPostRequestAction {
+  type: typeof LOAD_POST_REQUEST;
+  data: number;
+}
+
+export interface LoadPostSuccessAction {
+  type: typeof LOAD_POST_SUCCESS;
+  data: IMainPost;
+}
+
+export interface LoadPostFailureAction {
+  type: typeof LOAD_POST_FAILURE;
+  error: string;
+}
+
 export interface AddPostRequestAction {
   type: typeof ADD_POST_REQUEST;
   data: FormData ;
@@ -227,7 +242,10 @@ export type PostActionTypes =
   | ReTweetRequestAction
   | ReTweetSuccessAction
   | ReTweetFailureAction
-  | RemoveImageAction;
+  | RemoveImageAction
+  | LoadPostRequestAction
+  | LoadPostSuccessAction
+  | LoadPostFailureAction;
 
 export interface IMainPost {
   id: number;
@@ -285,6 +303,7 @@ export interface AddCommentSuccessData {
 }
 
 export interface PostState {
+  singlePost: IMainPost | null;
   mainPosts: IMainPost[];
   imagePaths: string[];
   hasMorePosts: boolean;
@@ -318,6 +337,7 @@ export interface PostState {
 }
 
 const initialState: PostState = {
+  singlePost: null,
   mainPosts: [],
   imagePaths: [],
   hasMorePosts: true,
@@ -389,6 +409,11 @@ export const removeImageAction = (data: number): PostActionTypes => ({
 
 export const retweetRequestAction = (data: number): PostActionTypes => ({
   type: RETWEET_REQUEST,
+  data,
+});
+
+export const loadPostRequestAction = (data: number): PostActionTypes => ({
+  type: LOAD_POST_REQUEST,
   data,
 });
 
@@ -466,6 +491,20 @@ const reducer = (state: PostState = initialState, action: PostActionTypes): Post
     case UNLIKE_POST_FAILURE:
       draft.unlikePostLoading = false;
       draft.unlikePostError = action.error;
+      break;
+    case LOAD_POST_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_POST_SUCCESS:
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.singlePost = action.data;
+      break;
+    case LOAD_POST_FAILURE:
+      draft.loadPostLoading = false;
+      draft.loadPostError = action.error;
       break;
     case LOAD_POSTS_REQUEST:
       draft.loadPostsLoading = true;

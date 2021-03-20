@@ -10,6 +10,7 @@ const App = ({ Component, pageProps }: AppProps) => (
     <Head>
       <meta charSet="utf-8" />
       <title>NodeBird</title>
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
     {/* eslint-disable-next-line react/jsx-props-no-spreading */}
     <Component {...pageProps} />
