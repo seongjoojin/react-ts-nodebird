@@ -1,10 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
 import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { Global, css } from '@emotion/react';
-
+import { useRouter } from 'next/router';
+import useInput from '../hooks/useInput';
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
 import { RootState } from '../reducers';
@@ -18,7 +19,13 @@ interface IProps {
 }
 
 const AppLayout = ({ children }:IProps) => {
+  const router = useRouter();
   const { me } = useSelector((state: RootState) => state.user);
+  const [searchInput, onChangeSearchInput] = useInput('');
+
+  const onSearch = useCallback(() => {
+    router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
   return (
     <div>
       <Global
@@ -47,7 +54,12 @@ const AppLayout = ({ children }:IProps) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <SearchInput enterButton />
+          <SearchInput
+            enterButton
+            value={searchInput}
+            onChange={onChangeSearchInput}
+            onSearch={onSearch}
+          />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup">
