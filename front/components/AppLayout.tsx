@@ -61,11 +61,6 @@ const AppLayout = ({ children }:IProps) => {
             onSearch={onSearch}
           />
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup">
-            <a>회원가입</a>
-          </Link>
-        </Menu.Item>
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>

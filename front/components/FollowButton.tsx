@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IMainPost } from '../reducers/post';
 import { RootState } from '../reducers';
-import {followRequestAction, unfollowRequestAction} from '../reducers/user';
+import { followRequestAction, unfollowRequestAction } from '../reducers/user';
 
 interface IProps {
   post: IMainPost;

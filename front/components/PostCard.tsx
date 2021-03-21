@@ -4,6 +4,7 @@ import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, Ellipsis
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import Link from 'next/link';
+import dayjs from 'dayjs';
 import {
   IMainPost,
   likePostRequestAction,
@@ -24,6 +25,8 @@ const CardWrapper = styled.div`
 interface IProps {
   post: IMainPost
 }
+
+dayjs.locale('ko');
 
 const PostCard = ({ post }: IProps) => {
   const dispatch = useDispatch();
@@ -89,13 +92,14 @@ const PostCard = ({ post }: IProps) => {
             <EllipsisOutlined />
           </Popover>,
         ]}
-        title={post.RetweetId ? `${post.User.nickname[0]}님이 리트윗하셨습니다.` : null}
+        title={post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
         extra={id && <FollowButton post={post} />}
       >
         {post.RetweetId && post.Retweet ? (
           <Card
             cover={post.Retweet.Images[0] && <PostImage images={post.Retweet.Images} />}
           >
+            <div style={{ float: 'right' }}>{dayjs(post.createdAt).format('YYYY.MM.DD')}</div>
             <Card.Meta
               avatar={(
                 <Link href={`/user/${post.Retweet.User.id}`}>
@@ -107,15 +111,18 @@ const PostCard = ({ post }: IProps) => {
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={(
-              <Link href={`/user/${post.User.id}`}>
-                <a><Avatar>{post.User.nickname[0]}</Avatar></a>
-              </Link>
+          <>
+            <div style={{ float: 'right' }}>{dayjs(post.createdAt).format('YYYY.MM.DD')}</div>
+            <Card.Meta
+              avatar={(
+                <Link href={`/user/${post.User.id}`}>
+                  <a><Avatar>{post.User.nickname[0]}</Avatar></a>
+                </Link>
             )}
-            title={post.User.nickname}
-            description={<PostCardContent postData={post.content} />}
-          />
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
+          </>
         )}
       </Card>
       {commentFormOpened && (
