@@ -22,9 +22,11 @@ interface IData {
 interface IProps {
   header: string;
   data: IData[] | undefined;
+  onClickMore: () => void;
+  loading: boolean;
 }
 
-const FollowList = ({ header, data }: IProps) => {
+const FollowList = ({ header, data, onClickMore, loading }: IProps) => {
   const dispatch = useDispatch();
   const listStyle = useMemo(() => ({ marginBottom: 20 }), []);
   const listGrid = useMemo(() => ({ gutter: 4, xs: 2, md: 3 }), []);
@@ -43,7 +45,7 @@ const FollowList = ({ header, data }: IProps) => {
       header={<div>{header}</div>}
       loadMore={(
         <LoadMoreBox>
-          <Button>더 보기</Button>
+          <Button onClick={onClickMore} loading={loading}>더 보기</Button>
         </LoadMoreBox>
       )}
       bordered
