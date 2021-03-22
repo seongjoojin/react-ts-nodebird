@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app",
-    "start": "pm2 starta app.js"
+    "start": "pm2 start app.js"
   },
   "author": "ZeroCho",
   "license": "MIT",
