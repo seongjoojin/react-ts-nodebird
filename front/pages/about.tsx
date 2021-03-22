@@ -49,7 +49,7 @@ const About = () => {
   );
 };
 
-export const getStaticProps = wrapper.getStaticProps(async (context) => {
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   context.store.dispatch(loadUserRequestAction(1));
   context.store.dispatch(END);
   await (context.store as SagaStore).sagaTask?.toPromise();
