@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Slick from 'react-slick';
 import { Global, css } from '@emotion/react';
+import { backUrl } from '../../config/config';
 import { Overlay, Header, CloseButton, SlickWrapper, ImgWrapper, Indicator } from './styles';
 
 interface IProps {
@@ -36,7 +37,7 @@ const ImagesZoom = ({ images, onClose }: IProps) => {
             >
               {images.map((image) => (
                 <ImgWrapper key={image.src}>
-                  <img src={`http://localhost:3065/${image.src}`} alt={image.src} />
+                  <img src={`${backUrl}/${image.src}`} alt={image.src} />
                 </ImgWrapper>
               ))}
             </Slick>

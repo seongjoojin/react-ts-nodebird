@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { END } from 'redux-saga';
 import useSWR from 'swr';
+import { backUrl } from '../config/config';
 import wrapper, { SagaStore } from '../store/configureStore';
 import {
   FollowType,
@@ -23,8 +24,8 @@ const Profile = () => {
   const { me } = useSelector((state: RootState) => state.user);
   const [followersLimit, setFollowersLimit] = useState(3);
   const [followingsLimit, setFollowingsLimit] = useState(3);
-  const { data: followersData, error: followersError } = useSWR<Array<{ id: number; nickname: string; Follow: FollowType[] }>>(`http://localhost:3065/user/followers?limit=${followersLimit}`, fetcher);
-  const { data: followingsData, error: followingsError } = useSWR<Array<{ id: number; nickname: string; Follow: FollowType[] }>>(`http://localhost:3065/user/followings?limit=${followingsLimit}`, fetcher);
+  const { data: followersData, error: followersError } = useSWR<Array<{ id: number; nickname: string; Follow: FollowType[] }>>(`${backUrl}user/followers?limit=${followersLimit}`, fetcher);
+  const { data: followingsData, error: followingsError } = useSWR<Array<{ id: number; nickname: string; Follow: FollowType[] }>>(`${backUrl}/user/followings?limit=${followingsLimit}`, fetcher);
 
   useEffect(() => {
     if (!(me && me.id)) {

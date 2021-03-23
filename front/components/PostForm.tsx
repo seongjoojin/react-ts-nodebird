@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import {Button, Form, Input, message} from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { backUrl } from '../config/config';
 import { RootState } from '../reducers';
 import { addPostRequestAction, removeImageAction, uploadImagesRequestAction } from '../reducers/post';
 import useInput from '../hooks/useInput';
@@ -80,7 +80,7 @@ const PostFrom = () => {
       <div>
         {imagePaths.map((v, i) => (
           <PostImageBox key={v}>
-            <PostImage src={`http://localhost:3065/${v}`} alt={v} />
+            <PostImage src={`${backUrl}/${v}`} alt={v} />
             <div>
               <Button onClick={onRemoveImage(i)}>제거</Button>
             </div>
